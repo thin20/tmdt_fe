@@ -7,7 +7,7 @@
       <h4 class="home-produce-item__name">{{ product.name }}</h4>
       <div class="home-produce-item__price">
         <span class="home-produce-item__price-old">{{ formatPriceToVND(product.price) }}</span>
-        <span class="home-produce-item__price-new">{{ formatPriceToVND(newPrice) }}</span>
+        <span class="home-produce-item__price-new">{{ formatPriceToVND(calcNewPrice(product.price, product.discount)) }}</span>
       </div>
       <div class="home-produce-item__action">
         <span class="home-produce-item__like home-produce-item__liked">
@@ -48,11 +48,7 @@ export default {
   },
   data () {
     return {
-      newPrice: 0
     }
-  },
-  created () {
-    this.newPrice = this.product.price - Math.floor((this.product.discount / 100) * this.product.price)
   },
   methods: {
     gotoDetail () {
