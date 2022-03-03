@@ -7,13 +7,18 @@ export const constRouteMapClient = [
         path: '/',
         name: 'home',
         component: () => import('@/views/client/user/home/index')
-      },
-      {
-        path: '/404',
-        exact: true,
-        name: 'pageNotFound',
-        component: () => import('@/layouts/general/exception/404')
       }
     ]
+  },
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  },
+  {
+    path: '/404',
+    exact: true,
+    name: 'pageNotFound',
+    component: () => import('@/layouts/general/exception/404')
   }
 ]

@@ -27,7 +27,7 @@
                 <span class="header__cart-item-description">
                   Phân loại: Bạc
                 </span>
-                <span class="header__cart-item-remove" @click="handleDeleteProductInCart(bill.id)">Xóa</span>
+                <span class="header__cart-item-remove" @click="handleDeleteProductInCart(bill)">Xóa</span>
               </div>
             </div>
           </li>
@@ -92,8 +92,15 @@ export default {
     gotoCart () {
       console.log('go to cart')
     },
-    handleDeleteProductInCart (id) {
-      console.log('delete product in cart', id)
+    handleDeleteProductInCart (bill) {
+      const $this = this
+      this.$confirm({
+        content: `Bạn có chắc chắn muốn xóa sản phẩm ${bill.product.name} trong giỏ hàng?`,
+        onOk: () => {
+          // TODO: delete product in cart
+          $this.$success({ content: `Xóa sản phẩm ${bill.product.name} thành công!` })
+        }
+      })
     }
   }
 }
