@@ -35,6 +35,7 @@ import CategoryMobile from '@/components/user/category_mobile'
 import CategoryHome from '@/components/user/category_home_pc'
 import ProductItem from '@/views/client/user/home/product_item'
 import Pagination from '@/components/user/pagination'
+import { searchListProduct } from '@/api/product/index'
 export default {
   name: 'Home',
   components: {
@@ -232,6 +233,14 @@ export default {
       this.loadingListProduct = true
       this.listProduct = [...this.products]
       this.loadingListProduct = false
+      searchListProduct({}).then(rs => {
+        if (rs) {
+          console.log('listProduct: ', rs)
+        }
+      }).catch(err => {
+        const mes = this.handleApiError(err)
+        this.$error({ content: mes })
+      })
     },
     handleWatchMore () {
       console.log('handleWatchMore')
