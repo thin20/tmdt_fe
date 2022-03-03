@@ -152,6 +152,9 @@ export const mixin = {
       }
       return baseUrl
     },
+    convertToSlugToProductDetail (productName, productId) {
+      return productName.split(' ').join('-') + `.${productId}`
+    },
     checkLoginToRedirect (callback) {
       if (!this.$store.getters.isLogin) {
         this.$router.push({ path: '/auth/login' })

@@ -7,6 +7,11 @@ export const constRouteMapClient = [
         path: '/',
         name: 'home',
         component: () => import('@/views/client/user/home/index')
+      },
+      {
+        path: '/category/:categoryId',
+        name: 'productsByCategory',
+        component: () => import('@/views/client/user/products_by_category/index')
       }
     ]
   },

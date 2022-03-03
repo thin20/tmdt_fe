@@ -16,12 +16,6 @@
               <a-spin size="large" :spinning="loadingListProduct" style="width: 100%"></a-spin>
             </div>
             <button class="btn btn--primary btn-watch-more-product" v-if="visiblePagination === false" @click="handleWatchMore">Xem thêm</button>
-            <pagination
-              v-else
-              :total="pagination.total"
-              :currentPage="pagination.current"
-              @getByPagination="getByPagination"
-            ></pagination>
           </div>
         </div>
       </div>
@@ -33,17 +27,14 @@
 import HomeCarousel from '@/components/user/home_carousel'
 import CategoryMobile from '@/components/user/category_mobile'
 import CategoryHome from '@/components/user/category_home_pc'
-import ProductItem from '@/views/client/user/home/product_item'
-import Pagination from '@/components/user/pagination'
-import { searchListProduct } from '@/api/product/index'
+import ProductItem from '@/components/user/product_item/index'
 export default {
   name: 'Home',
   components: {
     HomeCarousel,
     CategoryMobile,
     CategoryHome,
-    ProductItem,
-    Pagination
+    ProductItem
   },
   data: () => {
     return {
@@ -233,17 +224,8 @@ export default {
       this.loadingListProduct = true
       this.listProduct = [...this.products]
       this.loadingListProduct = false
-      searchListProduct({}).then(rs => {
-        if (rs) {
-          console.log('listProduct: ', rs)
-        }
-      }).catch(err => {
-        const mes = this.handleApiError(err)
-        this.$error({ content: mes })
-      })
     },
     handleWatchMore () {
-      console.log('handleWatchMore')
       this.loadingListProduct = true
       this.listProduct = this.listProduct.concat(this.products)
       this.loadingListProduct = false

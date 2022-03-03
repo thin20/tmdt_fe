@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     gotoProductsByCategory (cat) {
-      console.log('gotoProductByCategory: ', cat.id)
+      this.$router.push({ name: 'productsByCategory', params: { categoryId: cat.id } })
     }
   }
 }
