@@ -76,6 +76,9 @@ export const mixin = {
         return ''
       }
     },
+    calcNewPrice (price, discount) {
+      return Math.floor(price - (discount / 100) * price)
+    },
     formatPriceToVND (value) {
       return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'VND' }).format(value)
     },
