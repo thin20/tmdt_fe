@@ -12,6 +12,12 @@ export const constRouteMapClient = [
         path: '/category/:categoryId',
         name: 'productsByCategory',
         component: () => import('@/views/client/user/products_by_category/index')
+      },
+      {
+        path: '/product/:slugWithId',
+        name: 'product-detail',
+        exact: true,
+        component: () => import('@/views/client/user/product_detail/index')
       }
     ]
   },
