@@ -1,7 +1,7 @@
 <template>
   <div class="header__cart">
     <div class="header__cart-wrap">
-      <div @click="gotoCart">  <i class="fas fa-shopping-cart header__cart-icon" ></i></div>
+      <div @click="gotoCart"><i class="fas fa-shopping-cart header__cart-icon"></i></div>
       <span class="header__cart-notify">{{ listProductInCart.length }}</span>
       <!-- No cart: header__cart-list--no-cart -->
       <div class="header__cart-list" :class="listProductInCart.length === 0 ? 'header__cart-list--no-cart' : ''">
@@ -90,7 +90,9 @@ export default {
   },
   methods: {
     gotoCart () {
-      console.log('go to cart')
+      if (this.$route.name !== 'cart') {
+        this.$router.push({ name: 'cart' })
+      }
     },
     handleDeleteProductInCart (bill) {
       const $this = this
