@@ -9,9 +9,9 @@
           @change="handleCheckAll"
         >
       </div>
-      <a href="#" class="cart-page-shop-header__shop-name">
+      <div class="cart-page-shop-header__shop-name" style="cursor: pointer" @click="handleCheckAll">
         {{ seller }}
-      </a>
+      </div>
     </div>
     <!-- cart item -->
     <cart-item

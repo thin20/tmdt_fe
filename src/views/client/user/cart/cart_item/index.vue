@@ -40,58 +40,88 @@
 
 <script>
 export default {
-    name: 'CartItem',
-    props: {
-        i: {
-            type: Number,
-            required: true
-        },
-        bill: {
-            type: Object,
-            required: true
-        }
+  name: 'CartItem',
+  props: {
+    i: {
+      type: Number,
+      required: true
     },
-    data () {
-        return {
-            newPrice: 0,
-            total: 0
-        }
-    },
-    mounted () {
-        this.newPrice = Math.floor(this.bill.product.price - (this.bill.product.discount / 100) * this.bill.product.price)
-        this.calcTotalPrice()
-    },
-    updated () {
-        this.calcTotalPrice()
-    },
-    methods: {
-        calcTotalPrice () {
-            this.total = this.newPrice * this.bill.quantity
-        },
-        handleSubQuantityProduct () {
-            console.log('subQuantity')
-        },
-        handleAddQuantityProduct () {
-            console.log('addQuantity')
-        },
-        handleChangeQuantityProduct (e) {
-            this.$refs.inputQuantity.focus()
-            let value = Number.parseInt(e.target.value)
-            if (value <= 0 || !value) {
-                value = 1
-            }
-            if (value > this.bill.product.quantity) {
-                value = this.bill.product.quantity
-            }
-            console.log('changeQuantity')
-        },
-        handleDeleteProduct () {
-            console.log('deleteProduct')
-        },
-        handleChecked () {
-            this.$emit('productChecked', { idBill: this.bill.id })
-        }
+    bill: {
+      type: Object,
+      required: true
     }
+  },
+  data () {
+    return {
+      newPrice: 0,
+      total: 0
+    }
+  },
+  mounted () {
+    this.newPrice = this.calcNewPrice(this.bill.product.price, this.bill.product.discount)
+    this.calcTotalPrice()
+  },
+  updated () {
+    this.calcTotalPrice()
+  },
+  methods: {
+    calcTotalPrice () {
+        this.total = this.newPrice * this.bill.quantity
+    },
+    handleSubQuantityProduct () {
+      if (this.bill.quantity > 1) {
+        this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: this.bill.quantity - 1 }).then(rs => {
+          if (rs) {
+            this.$message.success({ content: 'Giảm số lượng sản phẩm thành công!' })
+          }
+        }).catch((err) => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        })
+      }
+    },
+    handleAddQuantityProduct () {
+      if (this.bill.quantity < this.bill.product.quantity) {
+        this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: this.bill.quantity + 1 }).then(rs => {
+          if (rs) {
+            this.$message.success({ content: 'Tăng số lượng sản phẩm thành công!' })
+          }
+        }).catch((err) => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        })
+      }
+    },
+    handleChangeQuantityProduct (e) {
+      this.$refs.inputQuantity.focus()
+      let value = Number.parseInt(e.target.value)
+      if (value <= 0 || !value) {
+        value = 1
+      }
+      if (value > this.bill.product.quantity) {
+        value = this.bill.product.quantity
+      }
+      this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: value }).then(rs => {
+        if (rs) {
+          this.$message.success({ content: 'Thay đổi lượng sản phẩm thành công!' })
+        }
+      }).catch((err) => {
+        const mes = this.handleApiError(err)
+        this.$error({ content: mes })
+      })
+    },
+    handleDeleteProduct () {
+      this.$store.dispatch('RemoveProductsInCart', [this.bill.id]).then(rs => {
+        this.$message.success({ content: 'Xóa sản phẩm khỏi giỏ hàng thành công!' })
+      }).catch((err) => {
+        const mes = this.handleApiError(err)
+        this.$error({ content: mes })
+      })
+    },
+    handleChecked () {
+      this.$emit('productChecked', { idBill: this.bill.id })
+    }
+  }
 }
 </script>
 
