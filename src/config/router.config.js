@@ -18,6 +18,12 @@ export const constRouteMapClient = [
         name: 'product-detail',
         exact: true,
         component: () => import('@/views/client/user/product_detail/index')
+      },
+      {
+        path: '/cart',
+        name: 'cart',
+        exact: true,
+        component: () => import('@/views/client/user/cart/index')
       }
     ]
   },
