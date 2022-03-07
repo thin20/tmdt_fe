@@ -1,8 +1,7 @@
 <template>
   <li class="header__navbar-item header__navbar-user" @mousemove="visible = true" @mouseleave="visible = false">
-    <img src="@/assets/img/user.png" alt="user" class="header__navbar-user-img" />
-    <span class="header__navbar-item-name"> nguyen thin </span>
-
+    <img :src="image" alt="user" class="header__navbar-user-img" />
+    <span class="header__navbar-item-name"> {{ username }} </span>
     <ul class="header__navbar-user-menu" v-if="visible">
       <li class="header__navbar-user-item">
         <div @click="gotoAccount">Tài khoản của tôi</div>
@@ -26,25 +25,35 @@ export default {
   data () {
     return {
       username: '',
-      image: '@/assets/img/user.png',
+      image: '',
       visible: false
     }
   },
+  mounted () {
+    this.username = this.$store.getters.username
+    this.image = this.$store.getters.photoURL
+  },
   methods: {
     gotoAccount () {
-      console.log('go to account')
+      if (this.$route.name !== 'userInfo') {
+        this.$router.push({ name: 'userInfo' })
+      }
     },
     gotoAddress () {
-      console.log('go to address')
+      if (this.$route.name !== 'userAddress') {
+        this.$router.push({ name: 'userAddress' })
+      }
     },
     gotoPurchase () {
-      console.log('go to purchase')
+      if (this.$route.name !== 'purchase') {
+        this.$router.push({ name: 'purchase' })
+      }
     },
     handleLogout () {
-        console.log('logout')
+      this.visible = false
+      this.$store.commit('logout')
     }
-  },
-  mounted () {}
+  }
 }
 </script>
 

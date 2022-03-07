@@ -68,15 +68,15 @@ export default {
   props: {
     images: {
       type: Array,
-      require: true
+      required: true
     },
     mainImageProduct: {
       type: String,
-      require: true
+      required: true
     },
     productName: {
       type: String,
-      require: true
+      required: true
     }
   },
   data () {

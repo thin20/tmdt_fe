@@ -21,7 +21,12 @@ const user = {
     isLogin: state => state.isLogin,
     userId: state => state.info.id,
     shopName: state => state.info.shopName ?? `${state.info.firstName}`,
-    address: state => state.userAddress
+    address: state => state.info.userAddress,
+    numberPhone: state => state.info.numberPhone,
+    username: state => state.info.firstName + ' ' + state.info.lastName,
+    firstName: state => state.info.firstName,
+    lastName: state => state.info.lastName,
+    photoURL: state => state.info.photoURL
   },
   mutations: {
     SET_TOKEN: (state, token) => {
