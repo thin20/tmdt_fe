@@ -126,4 +126,4 @@ Vue.use(PageLoading)
 Vue.use(PermissionHelper)
 Vue.use(VueCropper)
 
-process.env.NODE_ENV !== 'production' && console.warn('development Nhom 4.')
+process.env.NODE_ENV !== 'production' && console.warn('development Nguyen Cao Thin')

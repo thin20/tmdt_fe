@@ -2,6 +2,7 @@ import Vue from 'vue'
 import moment from 'moment'
 import * as EmailValidator from 'email-validator'
 import { removeUtf8, trimSpace } from '@/utils/common'
+import { PurchaseType } from '../const/app.const'
 const API_ERROR_STATUSES = [404, 400, 500, 401, 403]
 export const mixin = {
   data: function () {
@@ -110,6 +111,33 @@ export const mixin = {
         return dateString.format(this.dateSubmitFormat)
       }
       return dateString
+    },
+    labelPurchase (purchaseType) {
+      let purchaseLabel = ''
+      switch (purchaseType) {
+        case PurchaseType.ALL:
+          purchaseLabel = 'Tất cả'
+          break
+        case PurchaseType.CANCELED:
+          purchaseLabel = 'Đã Hủy'
+          break
+        case PurchaseType.DELIVERED:
+          purchaseLabel = 'Đã giáo hàng'
+          break
+        case PurchaseType.DELIVERING:
+          purchaseLabel = 'Đang giáo hàng'
+          break
+        case PurchaseType.WAIT_CONFIRM:
+          purchaseLabel = 'Chờ xác nhận'
+          break
+        case PurchaseType.WAIT_TAKE:
+          purchaseLabel = 'Chờ lấy hàng'
+          break
+        default:
+          purchaseLabel = ''
+          break
+      }
+      return purchaseLabel
     },
     isLocalDateTime (dateString) {
       return moment(dateString, moment.HTML5_FMT.DATETIME_LOCAL_SECONDS, true).isValid()

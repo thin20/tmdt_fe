@@ -24,6 +24,32 @@ export const constRouteMapClient = [
         name: 'cart',
         exact: true,
         component: () => import('@/views/client/user/cart/index')
+      },
+      {
+        path: '/user-info',
+        component: () => import('@/views/client/user/user_profile/index'),
+        children: [
+          {
+            path: '/',
+            name: 'userInfo',
+            component: () => import('@/views/client/user/user_profile/user_info/index')
+          },
+          {
+            path: '/user-address',
+            name: 'userAddress',
+            component: () => import('@/views/client/user/user_profile/user_address/index')
+          },
+          {
+            path: '/user-pass',
+            name: 'userPass',
+            component: () => import('@/views/client/user/user_profile/user_pass/index')
+          },
+          {
+            path: '/purchase',
+            name: 'purchase',
+            component: () => import('@/views/client/user/user_profile/purchase/index')
+          }
+        ]
       }
     ]
   },

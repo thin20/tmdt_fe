@@ -39,7 +39,10 @@ export default {
   name: 'DetailProduct',
   components: { Breadcrumb },
   props: {
-    productDetail: Object
+    productDetail: {
+      type: Object,
+      required: true
+    }
   },
   data () {
     return {

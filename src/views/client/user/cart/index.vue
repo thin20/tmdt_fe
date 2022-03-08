@@ -7,6 +7,32 @@
         <button class="btn shopee-button-solid" @click="backToHome">MUA NGAY</button>
       </div>
       <div v-else>
+        <!-- delivery address -->
+        <div class="delivery-address" v-if="listUserAddress.length > 0">
+          <div class="delivery-address__header">
+            <i class="fas fa-map-marker-alt delivery-address__icon"></i><span class="delivery-address__title">Địa chỉ nhận hàng</span>
+          </div>
+          <div class="delivery-address__content">
+            <a-row :gutter="16">
+              <a-col :xs="24" :md="24" :lg="20">
+                <a-radio-group class="delivery-address__radio-group" v-model="addressChecked" @change="handleAddressCheckedChange">
+                  <a-radio class="delivery-address__radio" v-for="(item, index) in listUserAddress" :key="index" :value="item.id">
+                    <span class="address-bold-text" style="margin-right: 10px;">{{ item.recipientName }}</span>
+                    <span class="address-bold-text address-text">{{ item.recipientNumberPhone }}</span>
+                    <span class="address-text">{{ item.address + ' ' + item.ward + ' ' + item.district + ' ' + item.city }}</span>
+                    <span class="address-bold-text address-text">{{ item.isDefault === 1 ? 'Mặc định' : '' }}</span>
+                  </a-radio>
+                </a-radio-group>
+              </a-col>
+              <a-col :xs="24" :md="24" :lg="4">
+                <div @click="handleOpenModalAddress" class="h-button__red p-4 h-color__white" style="cursor: pointer;width: 90%; margin: 0 auto; text-align: center;">
+                  <i class="fas fa-plus"></i>
+                  <span class="mx-2"> Thêm địa chỉ </span>
+                </div>
+              </a-col>
+            </a-row>
+          </div>
+        </div>
         <!-- cart -->
         <div class="cart__content">
           <!-- cart header -->
@@ -34,7 +60,9 @@
           <div class="cart-page-footer">
             <div class="cart-page-footer__row1">
               <div class="row">
-                <div class="col col-12 col-sm-12 col-md-12 col-lg-7"></div>
+                <div class="col col-12 col-sm-12 col-md-12 col-lg-7">
+                  <div style="padding: 12px;" v-if="addressDefault">Địa chỉ nhận hàng: {{ addressDefault }}</div>
+                </div>
                 <div class="col col-12 col-sm-12 col-md-12 col-lg-5">
                   <div class=" cart-page-footer__row1-wrap">
                     <i class="fas fa-tags icon-voucher"></i>
@@ -71,6 +99,7 @@
             </div>
           </div>
         </div>
+        <modal-address v-if="visibleModal" :visible="visibleModal" :isCreated="true" @closeModal="handleCloseModal" :formData="formDataAddress"></modal-address>
       </div>
     </div>
   </div>
@@ -78,15 +107,20 @@
 
 <script>
 import CartShop from './cart_shop/'
+import ModalAddress from '@/components/user/modal_address/index'
 import _ from 'lodash'
 export default {
   name: 'Cart',
   components: {
-    CartShop
+    CartShop,
+    ModalAddress
   },
   computed: {
     listBillBySellerInCart () {
       return this.$store.getters.listBillBySeller
+    },
+    listUserAddress () {
+      return this.$store.getters.userAddress
     }
   },
   watch: {
@@ -96,6 +130,14 @@ export default {
         this.checkedAll = false
       }
       this.calcTotalPrice()
+    },
+    listUserAddress (newList, oldList) {
+      newList.forEach(item => {
+        if (item.isDefault === 1) {
+          this.addressChecked = item.id
+          return false
+        }
+      })
     }
   },
   created () {
@@ -105,6 +147,7 @@ export default {
       const mes = this.handleApiError(err)
       this.$error({ content: mes })
     })
+    this.$store.dispatch('getUserAddress')
   },
   mounted () {
     const newList = _.cloneDeep(this.listBillBySellerInCart)
@@ -115,6 +158,15 @@ export default {
     })
     this.listBillBySeller = newList
     this.calcTotalPrice()
+
+    this.listUserAddress.forEach(item => {
+      if (item.isDefault === 1) {
+        this.addressChecked = item.id
+        return false
+      }
+    })
+
+    this.getAddressDefault()
   },
   data () {
     return {
@@ -123,7 +175,22 @@ export default {
       listChecked: [],
       totalPrice: 0,
       totalProductChecked: 0,
-      keyRerender: false
+      keyRerender: false,
+      formDataAddress: {
+        city: '',
+        id_user: '',
+        address: '',
+        district: '',
+        ward: '',
+        latitude: '',
+        longitude: '',
+        recipientName: '',
+        recipientNumberPhone: '',
+        isDefault: 0
+      },
+      visibleModal: false,
+      addressChecked: '',
+      addressDefault: ''
     }
   },
   methods: {
@@ -218,13 +285,50 @@ export default {
     },
     backToHome () {
       this.$router.push({ name: 'home' })
+    },
+    handleOpenModalAddress () {
+      this.visibleModal = true
+    },
+    resetFormData () {
+      this.formDataAddress = {
+        city: '',
+        id_user: '',
+        address: '',
+        district: '',
+        ward: '',
+        latitude: '',
+        longitude: '',
+        recipientName: '',
+        recipientNumberPhone: '',
+        isDefault: this.listUserAddress.length > 0 ? 0 : 1
+      }
+    },
+    handleCloseModal () {
+      this.resetFormData()
+      this.visibleModal = false
+      this.create = false
+    },
+    getAddressDefault (id) {
+      if (this.listUserAddress.length === 0) this.addressDefault = ''
+      else {
+        let address = ''
+        if (id) {
+          address = this.listUserAddress.find(address => address.id === id)
+        } else {
+          address = this.listUserAddress.find(address => !!address.isDefault)
+        }
+        this.addressDefault = address.address + ' ' + address.ward + ' ' + address.district + ' ' + address.city
+      }
+    },
+    handleAddressCheckedChange () {
+      this.getAddressDefault(this.addressChecked)
     }
   }
 }
 </script>
 
 <style>
-input[type=checkbox] {
+.cart input[type=checkbox] {
   cursor: pointer;
 }
 
@@ -236,7 +340,7 @@ input[type=checkbox] {
     padding: 15px 0;
 }
 
-label {
+.cart label {
     padding: 0;
     margin: 0;
 }

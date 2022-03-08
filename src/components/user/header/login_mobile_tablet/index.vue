@@ -1,8 +1,8 @@
 <template>
-  <div class="login-on-mobile-tablet header__navbar-item header__navbar-user hide-on-pc">
-    <img src="@/assets/img/user.png" alt="User" class="header__navbar-user-img">
+  <div class="login-on-mobile-tablet header__navbar-item header__navbar-user hide-on-pc" @mousemove="visible = true" @mouseleave="visible = false">
+    <img class="header__navbar-user-img" :src="image" alt="User">
 
-    <ul class="header__navbar-user-menu">
+    <ul class="header__navbar-user-menu" v-if="visible">
       <li class="header__navbar-user-item">
         <div @click="gotoAccount">Tài khoản của tôi</div>
       </li>
@@ -22,18 +22,37 @@
 <script>
 export default {
   name: 'LoginMobileTablet',
+  data: () => {
+    return {
+      username: '',
+      image: '',
+      visible: false
+    }
+  },
+  mounted () {
+    const { username, photoURL } = this.$store.getters.userInfo.info
+    this.username = username
+    this.image = photoURL
+  },
   methods: {
     gotoAccount () {
-      console.log('go to account')
+      if (this.$route.name !== 'userInfo') {
+        this.$router.push({ name: 'userInfo' })
+      }
     },
     gotoAddress () {
-      console.log('go to address')
+      if (this.$route.name !== 'userAddress') {
+        this.$router.push({ name: 'userAddress' })
+      }
     },
     gotoPurchase () {
-      console.log('go to purchase')
+      if (this.$route.name !== 'purchase') {
+        this.$router.push({ name: 'purchase' })
+      }
     },
     handleLogout () {
-      console.log('Logout')
+      this.visible = false
+      this.$store.commit('logout')
     }
   }
 }

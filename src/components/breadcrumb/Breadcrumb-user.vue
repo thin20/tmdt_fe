@@ -19,7 +19,10 @@
 export default {
   name: 'Breadcrumb',
   props: {
-    breadcrumb: Array
+    breadcrumb: {
+      type: Array,
+      required: true
+    }
   }
 
 }

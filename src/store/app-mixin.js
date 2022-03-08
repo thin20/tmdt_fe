@@ -20,10 +20,10 @@ const baseMixin = {
       return this.layout === 'topmenu'
     },
     partialUserEmail () {
-      return store.getters.userInfo.email.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, '$1***@$2')
+      return store.getters.userInfo.info.email.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, '$1***@$2')
     },
     partialUserNumberPhone () {
-      return store.getters.userInfo.numberPhone.replace(/(\d{3})\d{6}(\d{2})/, '$1*******$2')
+      return store.getters.userInfo.info.numberPhone.replace(/(\d{3})\d{6}(\d{2})/, '$1*******$2')
     }
   },
   methods: {
