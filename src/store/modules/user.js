@@ -74,7 +74,7 @@ const user = {
           ward: 'Tiên du',
           recipientName: 'Thìn',
           recipientNumberPhone: '0123456789',
-          default: 1,
+          isDefault: 1,
           latitude: 21.010163,
           longitude: 105.724724
         },
@@ -88,7 +88,7 @@ const user = {
           ward: 'Xã Cự Khê',
           recipientName: 'Nguyễn Cao Thìn',
           recipientNumberPhone: '0123456789',
-          default: 0,
+          isDefault: 0,
           latitude: 20.9111461,
           longitude: 105.7815231
         }

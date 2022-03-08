@@ -52,8 +52,7 @@
           <p class="text-decoration-underline mr-3" style="cursor: pointer;" @click="handleOpenModalUpdate(address)">Sửa</p>
           <p class="text-decoration-underline" style="cursor: pointer;" v-if="!address.isDefault" @click="handleDeleteUserAddress(address.id)">Xóa</p>
         </div>
-        <div class=" p-2 btn-light cursor-pointer" @click="setDeliveryAddress(address.id)">
-
+        <div class=" p-2 btn-light cursor-pointer" v-if="!address.isDefault" @click="setDeliveryAddress(address.id)">
           <span class="mx-2"> Thiết lập mặc định </span>
         </div>
       </div>

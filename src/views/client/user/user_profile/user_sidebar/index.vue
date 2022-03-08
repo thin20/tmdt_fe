@@ -6,7 +6,7 @@
       </div>
       <div class="d-flex ml-3 flex-column pt-2">
         <div class="product-comment-user__name fw-600">{{ username }}</div>
-        <div class="text-muted"><i class="fas fa-pen"></i>   <router-link :to="{name: 'userInfo'}"> <span>Chỉnh sửa</span></router-link> </div>
+        <div class="text-muted"><i class="fas fa-pen"></i><router-link :to="{name: 'userInfo'}"> <span>Chỉnh sửa</span></router-link></div>
       </div>
 
     </div>
@@ -123,7 +123,7 @@ export default {
     }
   },
   mounted () {
-    const { username, photoURL } = this.$store.getters.userInfo.info
+    const { username, photoURL } = this.$store.getters
     this.username = username
     this.image = photoURL
   }
