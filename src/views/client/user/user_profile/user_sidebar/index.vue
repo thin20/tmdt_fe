@@ -18,11 +18,9 @@
           <span class="pl-1 fw-600 ">Tài khoản của tôi</span>
         </div>
         <div class="slideContent" style="padding-left : 31px">
-          <router-link :to="{name: 'userInfo'}">Hồ sơ</router-link>
-          <br/>
-          <router-link :to="{name: 'userAddress'}">Địa chỉ</router-link>
-          <br/>
-          <router-link :to="{name: 'userPass'}">Thêm Mật Khẩu</router-link>
+          <router-link :to="{name: 'userInfo'}"><p style="padding: 8px 0; margin: 0;">Hồ sơ</p></router-link>
+          <router-link :to="{name: 'userAddress'}"><p style="padding: 8px 0; margin: 0;">Địa chỉ</p></router-link>
+          <router-link :to="{name: 'userPass'}"><p style="padding: 8px 0; margin: 0;">Thêm Mật Khẩu</p></router-link>
         </div>
       </div>
       <div class="depth-1 mb-3">
