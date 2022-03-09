@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import {
-  constRouteMapClient
+  constRouteMapClient,
+  asyncRouterAuth
 } from '@/config/router.config'
 import NProgress from 'nprogress' // progress bar
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
@@ -12,7 +13,7 @@ const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   scrollBehavior: () => ({ y: 0 }),
-  routes: constRouteMapClient.concat([])
+  routes: constRouteMapClient.concat(asyncRouterAuth)
 })
 
 // const pathRequireAuth = []

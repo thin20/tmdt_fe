@@ -2,6 +2,7 @@ export const constRouteMapClient = [
   {
     path: '/',
     component: () => import('@/views/client/user/index'),
+    exact: true,
     children: [
       {
         path: '/',
@@ -57,6 +58,25 @@ export const constRouteMapClient = [
     path: '*',
     redirect: '/404',
     hidden: true
+  }
+]
+
+export const asyncRouterAuth = [
+  {
+    path: '/auth',
+    component: () => import('@/views/client/auth/index'),
+    children: [
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import('@/views/client/auth/login/index')
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('@/views/client/auth/register/index')
+      }
+    ]
   },
   {
     path: '/404',
