@@ -159,7 +159,7 @@
                     style="color: black"
                     v-model="modelForm.description"
                     :maxLength="500"
-                    :auto-size="{ minRows: 3}"
+                    :auto-size="{ minRows: 10}"
                     @blur="DeepTrimValue(modelForm)"
                   />
                 </a-form-model-item>

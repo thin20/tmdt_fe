@@ -1,7 +1,7 @@
 <template>
   <global-footer class="footer custom-render">
     <template v-slot:links>
-      <a href="" target="_blank">Copyright ©2021. All rights reserved.</a>
+      <a href="" target="_blank">Copyright ©2022. All rights reserved.</a>
     </template>
   </global-footer>
 </template>

@@ -10,7 +10,7 @@ export const asyncRouterMap = [
     path: '/admin',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home', breadcrumbText: 'menu.home' },
+    meta: { title: 'Trang chủ', breadcrumbText: 'Trang chủ' },
     redirect: 'dashboard',
     children: [
       // DASHBOARD
@@ -19,25 +19,35 @@ export const asyncRouterMap = [
         name: 'dashboard',
         component: () => import('@/views/admin/dashboard/Analysis'),
         hideChildrenInMenu: true,
-        meta: {
-          title: 'menu.home',
-          keepAlive: true,
-          icon: 'home',
-          requiredLogin: true
-        }
+        meta: { title: 'TRANG CHỦ', keepAlive: true, icon: 'home', requiredLogin: true }
       },
       {
         path: 'grocery',
         name: 'grocery',
         component: () => import('@/views/admin/grocery/Index'),
         hideChildrenInMenu: false,
-        meta: { title: 'Quản lý kho', keepAlive: true, icon: 'file-done', requiredLogin: false },
+        meta: { title: 'SẢN PHẨM', keepAlive: true, icon: 'file-done', requiredLogin: true },
         children: [
           {
             path: 'product',
             name: 'grocery.product',
             component: () => import('@/views/admin/grocery/product/Index'),
-            meta: { title: 'menu.product.item', pageName: 'menu.product.item', breadcrumbText: 'menu.product.item', keepAlive: false }
+            meta: { title: 'Quản lý sản phẩm', pageName: 'Quản lý sản phẩm', breadcrumbText: 'Quản lý sản phẩm', keepAlive: false }
+          }
+        ]
+      },
+      {
+        path: 'bill',
+        name: 'bill',
+        component: () => import('@/views/admin/bill/Index'),
+        hideChildrenInMenu: false,
+        meta: { title: 'ĐƠN HÀNG', keepAlive: true, icon: 'shop', requiredLogin: true },
+        children: [
+          {
+            path: 'status',
+            name: 'Quản lý đơn hàng',
+            component: () => import('@/views/admin/bill/status/Index'),
+            meta: { title: 'Quản lý đơn hàng', pageName: 'Quản lý đơn hàng', breadcrumbText: 'Quản lý đơn hàng', keepAlive: false }
           }
         ]
       }
