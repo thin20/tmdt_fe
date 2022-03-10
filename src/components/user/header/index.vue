@@ -141,7 +141,7 @@ export default {
       }
     },
     goToAdmin () {
-      console.log('goto admin')
+      this.$router.push({ name: 'dashboard' })
     },
     handleSearchProduct () {
       console.log('keyword: ', this.keyword)

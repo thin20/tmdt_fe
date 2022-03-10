@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import app from './modules/app'
 
 // default router permission control
-import permission from './modules/permission'
 import user from './modules/user'
 import cart from './modules/cart'
 
@@ -17,7 +16,6 @@ Vue.use(Vuex)
 const vuex = new Vuex.Store({
   modules: {
     app,
-    permission,
     user,
     cart
   },

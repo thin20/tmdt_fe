@@ -1,3 +1,29 @@
+import BasicLayout from '@/layouts/admin/BasicLayout'
+export const asyncRouterMap = [
+  {
+    path: '/admin',
+    name: 'index',
+    component: BasicLayout,
+    meta: { title: 'menu.home', breadcrumbText: 'menu.home' },
+    redirect: 'dashboard',
+    children: [
+      // DASHBOARD
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/admin/dashboard/Analysis'),
+        hideChildrenInMenu: true,
+        meta: {
+          title: 'menu.home',
+          keepAlive: true,
+          icon: 'home',
+          requiredLogin: true
+        }
+      }
+    ]
+  }
+]
+
 export const constRouteMapClient = [
   {
     path: '/',
