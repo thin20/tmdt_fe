@@ -1,4 +1,10 @@
 import BasicLayout from '@/layouts/admin/BasicLayout'
+
+// const RouteView = {
+//   name: 'RouteView',
+//   render: h => h('router-view')
+// }
+
 export const asyncRouterMap = [
   {
     path: '/admin',
@@ -19,6 +25,21 @@ export const asyncRouterMap = [
           icon: 'home',
           requiredLogin: true
         }
+      },
+      {
+        path: 'grocery',
+        name: 'grocery',
+        component: () => import('@/views/admin/grocery/Index'),
+        hideChildrenInMenu: false,
+        meta: { title: 'Quản lý kho', keepAlive: true, icon: 'file-done', requiredLogin: false },
+        children: [
+          {
+            path: 'product',
+            name: 'grocery.product',
+            component: () => import('@/views/admin/grocery/product/Index'),
+            meta: { title: 'menu.product.item', pageName: 'menu.product.item', breadcrumbText: 'menu.product.item', keepAlive: false }
+          }
+        ]
       }
     ]
   }
