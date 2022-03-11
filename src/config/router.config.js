@@ -1,3 +1,60 @@
+import BasicLayout from '@/layouts/admin/BasicLayout'
+
+// const RouteView = {
+//   name: 'RouteView',
+//   render: h => h('router-view')
+// }
+
+export const asyncRouterMap = [
+  {
+    path: '/admin',
+    name: 'index',
+    component: BasicLayout,
+    meta: { title: 'Trang chủ', breadcrumbText: 'Trang chủ' },
+    redirect: 'dashboard',
+    children: [
+      // DASHBOARD
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/admin/dashboard/Analysis'),
+        hideChildrenInMenu: true,
+        meta: { title: 'TRANG CHỦ', keepAlive: true, icon: 'home', requiredLogin: true }
+      },
+      {
+        path: 'grocery',
+        name: 'grocery',
+        component: () => import('@/views/admin/grocery/Index'),
+        hideChildrenInMenu: false,
+        meta: { title: 'SẢN PHẨM', keepAlive: true, icon: 'file-done', requiredLogin: true },
+        children: [
+          {
+            path: 'product',
+            name: 'grocery.product',
+            component: () => import('@/views/admin/grocery/product/Index'),
+            meta: { title: 'Quản lý sản phẩm', pageName: 'Quản lý sản phẩm', breadcrumbText: 'Quản lý sản phẩm', keepAlive: false }
+          }
+        ]
+      },
+      {
+        path: 'bill',
+        name: 'bill',
+        component: () => import('@/views/admin/bill/Index'),
+        hideChildrenInMenu: false,
+        meta: { title: 'ĐƠN HÀNG', keepAlive: true, icon: 'shop', requiredLogin: true },
+        children: [
+          {
+            path: 'status',
+            name: 'Quản lý đơn hàng',
+            component: () => import('@/views/admin/bill/status/Index'),
+            meta: { title: 'Quản lý đơn hàng', pageName: 'Quản lý đơn hàng', breadcrumbText: 'Quản lý đơn hàng', keepAlive: false }
+          }
+        ]
+      }
+    ]
+  }
+]
+
 export const constRouteMapClient = [
   {
     path: '/',
