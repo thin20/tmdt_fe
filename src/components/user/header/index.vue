@@ -45,7 +45,7 @@
             </a>
           </li>
           <!-- login on pc -->
-          <template>
+          <template v-if="!$store.getters.isLogin">
             <li class="header__navbar-item header__navbar-item--strong header__navbar-item--separate">
               <router-link :to="{ name: 'register' }" class="header__navbar-item-link">Đăng ký</router-link>
             </li>
@@ -54,7 +54,7 @@
             </li>
           </template>
 
-          <LoginPC></LoginPC>
+          <LoginPC v-else></LoginPC>
         </ul>
       </nav>
 
@@ -106,7 +106,7 @@
           <cart-header></cart-header>
 
           <!-- Login on mobile and tablet -->
-          <login-mobile-tablet></login-mobile-tablet>
+          <login-mobile-tablet v-if="$store.getters.isLogin"></login-mobile-tablet>
         </div>
         <sort-mobile></sort-mobile>
       </div>

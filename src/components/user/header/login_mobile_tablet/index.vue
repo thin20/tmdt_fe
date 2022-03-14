@@ -52,7 +52,12 @@ export default {
     },
     handleLogout () {
       this.visible = false
-      this.$store.commit('logout')
+      this.$confirm({ content: 'Bạn có chắn chắn muốn đăng xuất?',
+        onOk: () => {
+          this.$router.push({ name: 'login' })
+          this.$store.dispatch('logout')
+        }
+      })
     }
   }
 }

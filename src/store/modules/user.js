@@ -5,15 +5,14 @@ const user = {
     token: null,
     isLogin: false,
     info: {
+      id: 0,
       firstName: 'Nguyễn Cao',
       lastName: 'Thìn',
       photoURL: 'https://cf.shopee.vn/file/3fc286d5073fbafafdcf616a505672eb',
       numberPhone: '08345345345',
       email: 'shobbebus@gmail.com',
       currentAddress: 'Số 26, ngõ 62, Vân Canh, Hoài Đức, Hà Nội',
-      shopName: 'Shop của Thìn',
-      address: '',
-      id: 0
+      shopName: 'Shop của Thìn'
     },
     userAddress: []
   },
@@ -34,7 +33,16 @@ const user = {
       state.isLogin = true
     },
     SET_INFO: (state, info) => {
-      state.info = info
+      state.info = {
+        id: info.id,
+        firstName: info.firstName,
+        lastName: info.lastName,
+        photoURL: info.image,
+        numberPhone: info.phoneNumber,
+        email: info.email,
+        currentAddress: info.currentAddress,
+        shopName: info.shobbeName
+      }
       state.isLogin = true
     },
     SET_USER_ADDRESS: (state, address) => {
@@ -42,7 +50,9 @@ const user = {
     },
     LOGOUT: (state, info) => {
       state.info = {}
+      state.token = ''
       state.isLogin = false
+      state.userAddress = []
     },
     RESET_STATE (state) {
       // Merge rather than replace so we don't lose observers
