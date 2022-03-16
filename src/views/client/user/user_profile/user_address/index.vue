@@ -109,16 +109,16 @@ export default {
           this.$store.dispatch('removeUserAddress', { idAddress: id }).then(rs => {
             this.$message.success({ content: 'Xóa địa chỉ thành công!' })
           }).catch(() => {
-            this.$toast.error('Xóa địa chỉ thất bại!')
+            this.$message.error({ content: 'Xóa địa chỉ thất bại!' })
           })
         }
       })
     },
     setDeliveryAddress (id) {
       this.$store.dispatch('updateUserAddressDefault', { idAddress: id }).then(rs => {
-        this.$toast.success('Đặt địa chỉ mặc định thành công!')
+        this.$message.success({ content: 'Đặt địa chỉ mặc định thành công!' })
       }).catch(() => {
-        this.$toast.error('Đặt địa chỉ mặc định thất bại!')
+        this.$message.error({ content: 'Đặt địa chỉ mặc định thất bại!' })
       })
     },
     handleOpenModalCreate () {
