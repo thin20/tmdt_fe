@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ProductItem from '@/views/client/user/products_by_category/product_item'
+import ProductItem from '@/components/user/product_item/index'
 export default {
   name: 'ListProduct',
   components: {

@@ -16,3 +16,11 @@ export function register (params) {
     data: params
   })
 }
+
+export function loginByToken (token) {
+  return axios({
+    method: 'post',
+    url: api.loginByToken,
+    data: token
+  })
+}

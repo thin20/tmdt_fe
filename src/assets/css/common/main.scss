@@ -842,9 +842,9 @@ a:hover {
   margin: 0 4px 0 12px;
 }
 
-.header__search-input:focus ~ .header__search-history {
-  display: block;
-}
+//.header__search-input:focus ~ .header__search-history {
+//  display: block;
+//}
 
 /* Search history */
 .header__search-history {
@@ -856,7 +856,7 @@ a:hover {
   box-shadow: 0 1px 5px #999;
   background-color: var(--white-color);
   z-index: 1;
-  display: none;
+  display: block;
 }
 
 .header__search-history-heading {
@@ -878,6 +878,10 @@ a:hover {
 .header__search-history-item {
   padding: 0 12px;
   height: 38px;
+  line-height: 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header__search-history-item:hover {

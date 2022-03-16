@@ -74,10 +74,33 @@
 
         <div class="header__search">
           <div class="header__search-input-wrap">
-            <input v-model="keyword" type="text" class="header__search-input" placeholder="Nhập để tìm kiếm sản phẩm" />
-            <div class="header__search-history">
+            <input
+              @focus="() => { visibleHistory = true }"
+              @blur="handleBlurSearchInput"
+              @input="handleTypeSearch"
+              v-model="keyword"
+              type="text"
+              class="header__search-input"
+              ref="searchInput"
+              placeholder="Nhập để tìm kiếm sản phẩm" />
+            <div class="header__search-history" v-if="visibleHistory">
               <h3 class="header__search-history-heading">Lịch sử tìm kiếm</h3>
-              <ul class="header__search-history-list"></ul>
+              <ul class="header__search-history-list">
+                <li
+                  class="header__search-history-item"
+                  @click="handleChooseSearchHistoryItem"
+                  v-for="(item, index) in listSearchHistory"
+                  :key="index"
+                  :data-text="item">
+                  <span>{{ item }}</span>
+                  <a-tooltip placement="top">
+                    <template slot="title">
+                      Xóa
+                    </template>
+                    <a-icon @click="(e) => handleDeleteSearchHistoryItem(e, item)" size="small" type="close" style="cursor: pointer; color: #666;"/>
+                  </a-tooltip>
+                </li>
+              </ul>
             </div>
           </div>
           <div class="header__search-select">
@@ -120,6 +143,7 @@ import LoginPC from '@/components/user/header/login_pc'
 import CartHeader from '@/components/user/header/cart_header'
 import SortMobile from '@/components/user/header/sort_mobile'
 import LoginMobileTablet from '@/components/user/header/login_mobile_tablet'
+import { bus } from '@/main'
 export default {
   name: 'HeaderUser',
   components: {
@@ -131,7 +155,17 @@ export default {
   },
   data () {
     return {
-      keyword: ''
+      keyword: '',
+      listSearchHistory: [],
+      visibleHistory: false
+    }
+  },
+  created () {
+    if (!localStorage.getItem('listSearchHistory')) {
+      this.listSearchHistory = []
+      localStorage.setItem('listSearchHistory', JSON.stringify([]))
+    } else {
+      this.listSearchHistory = this.getListSearchHistory()
     }
   },
   methods: {
@@ -144,7 +178,64 @@ export default {
       this.$router.push({ name: 'dashboard' })
     },
     handleSearchProduct () {
-      console.log('keyword: ', this.keyword)
+      bus.$emit('searchProductsByKeyword', this.keyword)
+      this.setItemToSearchHistory(this.keyword)
+      this.listSearchHistory = this.getListSearchHistory(this.keyword)
+    },
+    handleTypeSearch () {
+      this.listSearchHistory = this.getListSearchHistory(this.keyword)
+    },
+    handleChooseSearchHistoryItem (e) {
+      this.keyword = e.target.dataset.text
+      this.listSearchHistory = this.getListSearchHistory(this.keyword)
+      bus.$emit('searchProductsByKeyword', this.keyword)
+    },
+    handleDeleteSearchHistoryItem (e, keyword) {
+      e.stopPropagation()
+      if (!keyword) return
+      const listSearchHistory = JSON.parse(localStorage.getItem('listSearchHistory'))
+      const index = listSearchHistory.findIndex((item) => {
+        return item.toLowerCase() === keyword.toLowerCase()
+      })
+      if (index >= 0) {
+        listSearchHistory.splice(index, 1)
+        localStorage.setItem('listSearchHistory', JSON.stringify(listSearchHistory))
+        this.listSearchHistory = listSearchHistory
+      }
+    },
+    getListSearchHistory (keyword) {
+      keyword = keyword || ''
+      let listSearchHistory = JSON.parse(localStorage.getItem('listSearchHistory'))
+      listSearchHistory = listSearchHistory.filter(item => {
+        return (item.toLowerCase()).includes(keyword.toLowerCase())
+      })
+      if (!listSearchHistory) {
+        return []
+      } else {
+        const n = listSearchHistory.length <= 9 ? listSearchHistory.length : 9
+        return listSearchHistory.slice(0, n)
+      }
+    },
+    setItemToSearchHistory (item) {
+      if (!item) return
+      const listSearchHistory = JSON.parse(localStorage.getItem('listSearchHistory'))
+      if (!listSearchHistory) {
+        localStorage.setItem('listSearchHistory', JSON.stringify([item]))
+      } else {
+        const index = listSearchHistory.findIndex((item) => {
+          return item.toLowerCase() === this.keyword.toLowerCase()
+        })
+        if (index >= 0) {
+          listSearchHistory.splice(index, 1)
+        }
+        listSearchHistory.unshift(item)
+        localStorage.setItem('listSearchHistory', JSON.stringify(listSearchHistory))
+      }
+    },
+    handleBlurSearchInput () {
+      setTimeout(() => {
+        this.visibleHistory = false
+      }, 100)
     }
   }
 }

@@ -21,12 +21,27 @@ const router = new Router({
 const pathRequireAuth = ['/cart', '/user-info', '/admin/']
 
 router.beforeEach((routeTo, routeFrom, next) => {
-  if (pathRequireAuth.includes(routeTo.path)) {
-    if (!store.getters.isLogin) {
+  if (!Vue.$cookies.get('token')) {
+    if (pathRequireAuth.includes(routeTo.path)) {
       next({ name: 'login' })
+    } else {
+      next()
     }
+  } else {
+    if (!store.getters.isLogin) {
+      store.dispatch('loginByToken').then(rs => {
+        if (rs) {
+          next()
+        } else {
+          next({ name: 'login' })
+        }
+      }).catch(err => {
+        Vue.$toast(err)
+        next({ name: 'login' })
+      })
+    }
+    next()
   }
-  next()
 })
 // router.beforeResolve(async (routeTo, routeFrom, next) => {
 //   console.log('routeTo', routeTo)

@@ -115,6 +115,8 @@ export default {
             if (rs) {
               this.$store.dispatch('initUser', rs)
               this.$router.push({ name: 'home' })
+              const token = rs.token
+              this.$cookies.set('token', token)
             }
           }).catch(err => {
             const mes = this.handleApiError(err)

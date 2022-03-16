@@ -32,3 +32,5 @@ export const OrderType = Object.freeze({
   DESC: 'desc',
   ASC: 'asc'
 })
+
+export const FavouriteLevel = 1
