@@ -68,7 +68,7 @@
             size="large"
             html-type="submit"
             class="login-form-button"
-            :loading="this.loading"
+            :loading="loading"
             @click="handleSubmit"
           >
             Đăng nhập
@@ -79,37 +79,6 @@
         <a class="forgot-password" href="#">Quên mật khẩu</a>
         <a class="login-sms" href="#">Đăng nhập với SMS</a>
       </div>
-      <!-- <div>
-          <div class="IFLxoY">
-          <div class="_3svg61"></div>
-          <span class="_1ZEpVL">HOẶC</span>
-          <div class="_3svg61"></div>
-          </div>
-          <div class="_1ix216">
-          <button class="dJsOUU _1A307B _1hKScg _1A307B _2ph_NL">
-              <div class="_1b1OLX">
-              <div
-                  class="_1JEYOo social-white-background social-white-fb-png"
-              ></div>
-              </div>
-              <div class="_1iDCwS _28-Tq8">Facebook</div></button
-          ><button class="dJsOUU _1A307B _1hKScg _1A307B _1SPkQc">
-              <div class="_1b1OLX _35Loth">
-              <div
-                  class="_1o_kg_ social-white-background social-white-google-png"
-              ></div>
-              </div>
-              <div class="_1iDCwS">Google</div></button
-          ><button class="dJsOUU _1A307B _1hKScg _1A307B nvH7Oz">
-              <div class="_1b1OLX">
-              <div
-                  class="_1JEYOo social-white-background social-white-apple-png"
-              ></div>
-              </div>
-              <div class="_1iDCwS">Apple</div>
-          </button>
-          </div>
-      </div> -->
     </div>
     <div class="form-footer">
       <div class="form-footer__content">
@@ -121,6 +90,7 @@
 </template>
 
 <script>
+import { login } from '@/api/user/index'
 export default {
   name: 'Login',
   data () {
@@ -136,8 +106,22 @@ export default {
     handleSubmit () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          // TODO: call api login
-          this.$router.push({ name: 'home' })
+          const params = {
+            phoneNumber: this.form.phoneNumber,
+            password: this.form.password
+          }
+          this.loading = true
+          login(params).then(rs => {
+            if (rs) {
+              this.$store.dispatch('initUser', rs)
+              this.$router.push({ name: 'home' })
+            }
+          }).catch(err => {
+            const mes = this.handleApiError(err)
+            this.$error({ content: mes })
+          }).finally(() => {
+            this.loading = false
+          })
         }
       })
     },

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store/index'
 import {
   constRouteMapClient,
   asyncRouterAuth,
@@ -17,9 +18,14 @@ const router = new Router({
   routes: constRouteMapClient.concat(asyncRouterAuth, asyncRouterMap)
 })
 
-// const pathRequireAuth = []
+const pathRequireAuth = ['/cart', '/user-info', '/admin/']
 
 router.beforeEach((routeTo, routeFrom, next) => {
+  if (pathRequireAuth.includes(routeTo.path)) {
+    if (!store.getters.isLogin) {
+      next({ name: 'login' })
+    }
+  }
   next()
 })
 // router.beforeResolve(async (routeTo, routeFrom, next) => {

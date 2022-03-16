@@ -119,6 +119,7 @@
 </template>
 
 <script>
+import { register } from '@/api/user/index'
 export default {
   name: 'Register',
   data () {
@@ -139,14 +140,24 @@ export default {
     handleSubmit () {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          // TODO: call api create an account
           const params = {
             firstName: this.form.firstName,
             lastName: this.form.lastName,
             phoneNumber: this.form.phoneNumber,
             password: this.form.password
           }
-          console.log('params: ', params)
+          this.loading = true
+          register(params).then(rs => {
+            if (rs) {
+              this.$message.success({ content: 'Đăng ký tài khoản thành công!' })
+              this.$router.push({ name: 'login' })
+            }
+          }).catch(err => {
+            const mes = this.handleApiError(err)
+            this.$error({ content: mes })
+          }).finally(() => {
+            this.loading = false
+          })
         }
       })
     },
