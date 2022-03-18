@@ -24,7 +24,7 @@
           <i class="home-produce-item__star-gold fas fa-star" v-for="index in Number.parseInt(productItem.numberOfStar)" :key="index"></i>
           <i class="fas fa-star" v-for="index in (5 - Number.parseInt(productItem.numberOfStar))" :key="productItem.numberOfStar + index"></i>
         </div>
-        <span class="home-produce-item__sold">{{ productItem.selled }} đã bán</span>
+        <span class="home-produce-item__sold">{{ productItem.sold }} đã bán</span>
       </div>
       <div class="home-produce-item__origin">
         <span class="home-produce-item__origin-brand">Whoo</span>

@@ -3,18 +3,26 @@
     <span class="home-filter__label">Sắp xếp theo</span>
     <button
       class="home-filter__btn btn"
+      style="width: 110px; min-width: 110px;"
       :class="currentSortType === sortType.POPULAR ? 'btn--primary' : ''"
       @click="handleSortProducts(sortType.POPULAR, orderType.DESC)">Phổ biến</button>
     <button
       class="home-filter__btn btn"
+      style="width: 115px; min-width: 115px;"
       :class="currentSortType === sortType.NEWEST ? 'btn--primary' : ''"
       @click="handleSortProducts(sortType.NEWEST, orderType.DESC)">Mới nhất</button>
     <button
       class="home-filter__btn btn"
+      style="width: 115px; min-width: 115px;"
       :class="currentSortType === sortType.BEST_SALE ? 'btn--primary' : ''"
       @click="handleSortProducts(sortType.BEST_SALE, orderType.DESC)">Bán chạy</button>
+    <button
+      class="home-filter__btn btn"
+      style="width: 115px; min-width: 115px;"
+      :class="currentSortType === sortType.FAVOURITE ? 'btn--primary' : ''"
+      @click="handleSortProducts(sortType.FAVOURITE, orderType.DESC)">Yêu thích</button>
 
-    <div class="select-input" :class="currentSortType === sortType.PRICE ? 'active' : ''">
+    <div class="select-input" style="width: 180px; min-width: 180px; margin: 0 8px;" :class="currentSortType === sortType.PRICE ? 'active' : ''">
       <span class="select-input__label" style="color: var(--primary-color);" v-if="currentSortType === sortType.PRICE && currentOrderType === orderType.ASC">Giá: thấp đến cao</span>
       <span class="select-input__label" style="color: var(--primary-color);" v-else-if="currentSortType === sortType.PRICE && currentOrderType === orderType.DESC">Giá: Cao đến thấp</span>
       <span class="select-input__label" v-else>Giá</span>

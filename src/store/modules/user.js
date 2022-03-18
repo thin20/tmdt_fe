@@ -55,6 +55,7 @@ const user = {
       state.token = ''
       state.isLogin = false
       state.userAddress = []
+      Vue.$cookies.remove('token')
     },
     RESET_STATE (state) {
       // Merge rather than replace so we don't lose observers

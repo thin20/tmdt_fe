@@ -115,8 +115,8 @@ export default {
         keyword: this.params.keyword,
         page: this.params.pageNum > 0 ? this.params.pageNum - 1 : 0,
         size: this.params.pageSize,
-        sortBy: this.params.sortType,
-        order: this.params.orderType
+        sortType: this.params.sortType,
+        orderType: this.params.orderType
       }
       if (this.$store.getters.isLogin) {
         params.currentUserId = this.$store.getters.userId
