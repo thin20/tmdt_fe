@@ -8,3 +8,11 @@ export function searchListProduct (params) {
     params: params
   })
 }
+
+export function likeProduct (params) {
+  return axios({
+    url: api.likeProduct,
+    method: 'post',
+    data: params
+  })
+}

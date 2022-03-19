@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import { loginByToken } from '@/api/user/index'
 import _ from 'lodash'
 
 const user = {
@@ -53,6 +55,7 @@ const user = {
       state.token = ''
       state.isLogin = false
       state.userAddress = []
+      Vue.$cookies.remove('token')
     },
     RESET_STATE (state) {
       // Merge rather than replace so we don't lose observers
@@ -69,7 +72,28 @@ const user = {
     logout ({ commit }, userInfo) {
       commit('LOGOUT')
     },
-    loginToken ({ commit, dispatch }, userInfo) {
+    loginByToken ({ commit, dispatch }) {
+      return new Promise((resolve, reject) => {
+        const token = Vue.$cookies.get('token')
+        if (token) {
+          loginByToken(token).then(rs => {
+            if (rs) {
+              commit('SET_INFO', rs)
+              commit('SET_TOKEN', rs.token)
+              resolve(rs)
+            } else {
+              resolve(rs)
+            }
+          }).catch(error => {
+            Vue.$cookies.remove('token')
+            dispatch('handleTokenIllegal')
+            reject(error)
+          })
+        } else {
+          dispatch('handleTokenIllegal')
+          reject(new Error('Không có token!'))
+        }
+      })
     },
     getUserAddress ({ commit }) {
       // TODO: Call api get list user address

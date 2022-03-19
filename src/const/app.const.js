@@ -22,9 +22,10 @@ export const ACTION_TYPE = Object.freeze({
 })
 
 export const SortType = Object.freeze({
-  NEWEST: 'createdAt',
+  NEWEST: 'created_at',
   POPULAR: 'star',
-  BEST_SALE: 'selled',
+  BEST_SALE: 'sold',
+  FAVOURITE: 'favourite',
   PRICE: 'price'
 })
 
@@ -32,3 +33,5 @@ export const OrderType = Object.freeze({
   DESC: 'desc',
   ASC: 'asc'
 })
+
+export const FavouriteLevel = 1
