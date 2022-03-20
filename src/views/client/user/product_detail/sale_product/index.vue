@@ -18,11 +18,11 @@
         </div>
       </div>
       <div class="product-reviews__detail">
-        <span class="product-reviews__detail-number"> {{ product.commentCount }} </span>
+        <span class="product-reviews__detail-number"> 100 </span>
         <span class="product-reviews__detail-title">Đánh giá</span>
       </div>
       <div class="product-reviews__sold">
-        <span class="product-reviews__sold-number"> {{ product.selled }} </span>
+        <span class="product-reviews__sold-number"> {{ product.sold }} </span>
         <span class="product-reviews__sold-title">Đã bán</span>
       </div>
     </div>
@@ -100,7 +100,7 @@
                   :value="selectQuantity"
                   :min="1"
                   :max="product.quantity"
-                  oninput="">
+                  @input="handleInputQuantity">
                 <button class="btn-add-quantity" @click="addQuantity">+</button>
               </div>
               <div> {{ product.quantity }} (Sản Phẩm) </div>
@@ -108,16 +108,12 @@
           </div>
           <div class="product-option__select">
             <div>
-              <button type="button" class="product-option-btn btn-add-to-cart" @click="addToCart">
-                Thêm vào giỏ
-                hàng
-              </button>
+              <button type="button" class="product-option-btn btn-add-to-cart" @click="addToCart">Thêm vào giỏ hàng</button>
               <button type="button" class="product-option-btn btn-buy-now" @click="buyRightNow">Mua ngay</button>
             </div>
           </div>
         </template>
         <template v-else>
-
           <p class="product-price__detail-new" style="font-size : 20px">Sản phẩm không được bán nữa</p>
         </template>
       </div>
@@ -140,18 +136,12 @@ export default {
     }
   },
   computed: {
-    // a computed getter
     salePrice: function () {
-      // `this` points to the vm instance
-     const newPrice = this.product.price - Math.floor((this.product.discount / 100) * this.product.price)
+      const newPrice = this.calcNewPrice(this.product.price, this.product.discount)
       return this.formatPriceToVND(newPrice)
     }
   },
-  mounted () {
-    console.log(this.product)
-  },
   methods: {
-    // ...mapActions(['GetListBillBySeller']),
     subQuantity () {
       if (this.selectQuantity - 1 > 0) {
         this.selectQuantity = Math.min(this.selectQuantity - 1, this.product.quantity)
@@ -160,7 +150,11 @@ export default {
     addQuantity () {
       this.selectQuantity = Math.min(this.selectQuantity + 1, this.product.quantity)
     },
-
+    handleInputQuantity (e) {
+      if (!e.target.value) this.selectQuantity = 1
+      else this.selectQuantity = Math.min(e.target.value, this.product.quantity)
+      e.target.value = this.selectQuantity
+    },
     createBill (callback) {
       this.checkLoginToRedirect(() => {
         // addToCart(this.product.id, this.selectQuantity).then((response) => {
@@ -415,12 +409,15 @@ export default {
 }
 .btn-sub-quantity, .btn-add-quantity:active {
     outline: none;
+    border: 1px solid #c3c3c3;
 }
 .btn-sub-quantity:focus {
     outline: none;
+    border: 1px solid #c3c3c3;
 }
 .btn-add-quantity:focus {
     outline: none;
+    border: 1px solid #c3c3c3;
 }
 
 .input-quantity {

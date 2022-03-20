@@ -63,6 +63,11 @@ export default {
   created () {
     this.productItem = _.cloneDeep(this.product)
   },
+  watch: {
+    product (newValue) {
+      this.productItem = _.cloneDeep(newValue)
+    }
+  },
   methods: {
     gotoDetail () {
       this.$router.push({ path: `/product/${this.convertToSlugToProductDetail(this.product.name, this.product.id)}` })
@@ -77,7 +82,10 @@ export default {
         likeProduct(params).then(rs => {
           if (rs) {
             this.productItem.isLiked = !this.productItem.isLiked
-            const mes = (this.productItem.isLiked ? 'Yêu thích ' : 'Bỏ yêu thích ') + 'sản phẩm thành công!'
+            const mes = (this.productItem.isLiked ? 'Yêu thích ' : 'Hủy yêu thích ') + 'sản phẩm thành công!'
+            this.$message.success({ content: mes })
+          } else {
+            const mes = (this.productItem.isLiked ? 'Yêu thích ' : 'Hủy yêu thích ') + 'sản phẩm thất bại!'
             this.$message.success({ content: mes })
           }
         }).catch(err => {
@@ -85,7 +93,7 @@ export default {
           this.$error({ content: mes })
         })
       } else {
-        this.$router.push({ name: 'login' })
+        this.$message.error({ content: 'Bạn chưa đăng nhập!' })
       }
     }
   }

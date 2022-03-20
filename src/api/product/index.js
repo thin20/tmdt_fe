@@ -16,3 +16,11 @@ export function likeProduct (params) {
     data: params
   })
 }
+
+export function getProductDetail (params) {
+  return axios({
+    url: api.getProductDetail,
+    method: 'get',
+    params: params
+  })
+}
