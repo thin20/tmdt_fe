@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <div class="detail-product__information w-100">
       <div class="bg-blur detail-product__information w-100">
         <div class="title__name py-3 pl-3">Chi tiết sản phẩm</div>
@@ -15,11 +15,11 @@
         </div>
         <div class="quantity f-14 p-3">
           <label class="-w100 text-blur product-detail__name">Kho hàng</label>
-          <span> {{ productDetail.quantity }} </span>
+          <span> {{ product.quantity }} </span>
         </div>
         <div class="address f-14 p-3 ">
           <label class="-w100 text-blur product-detail__name">Gửi từ</label>
-          <span> {{ productDetail.address }} </span>
+          <span> {{ product.address }} </span>
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
       <div class="bg-blur detail-product__information w-100">
         <div class="title__name py-3 pl-3">Mô tả sản phẩm</div>
       </div>
-      <div class="f-14 p-3 product-detail__description" v-html="productDetail.description" style="white-space: pre-wrap;">
+      <div class="f-14 p-3 product-detail__description" v-html="product.description" style="white-space: pre-wrap;">
       </div>
     </div>
   </div>
@@ -35,6 +35,7 @@
 
 <script>
 import Breadcrumb from '@/components/breadcrumb/Breadcrumb-user'
+import _ from 'lodash'
 export default {
   name: 'DetailProduct',
   components: { Breadcrumb },
@@ -46,21 +47,33 @@ export default {
   },
   data () {
     return {
+      product: {},
       breadCrumbList: []
     }
   },
   watch: {
-
+    productDetail (newValue) {
+      this.product = _.cloneDeep(newValue)
+      this.getListBreadcrumb()
+    }
   },
-  mounted () {
-    this.breadCrumbList = this.productDetail?.categories?.map(categoryItem => ({
-      id: categoryItem.id,
-      text: categoryItem.original_category_name
-    })).reverse()
-    this.breadCrumbList.unshift({
-      text: 'Shobbe',
-      routerName: '/'
-    })
+  created () {
+    this.product = _.cloneDeep(this.productDetail)
+    this.getListBreadcrumb()
+  },
+  methods: {
+    getListBreadcrumb () {
+      if (this.product.categories) {
+        this.breadCrumbList = this.product.categories.map(category => ({
+          id: category.id,
+          text: category.original_category_name
+        })).reverse()
+      }
+      this.breadCrumbList.unshift({
+        text: 'TMDT',
+        routerName: '/'
+      })
+    }
   }
 }
 </script>

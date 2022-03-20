@@ -2,12 +2,11 @@
   <div class="depicted-product">
     <div class="row">
       <div class="col col-12 slider-for">
-        <img :src="this.mainImageProduct" alt="product" class="depicted-product__img-item depicted-product__img" style="width: 100%" @click="showLightBox(0)">
+        <img :src="product.image" alt="product" class="depicted-product__img-item depicted-product__img" style="width: 100%" @click="showLightBox(0)">
       </div>
     </div>
 
     <div class="row">
-
       <div class="col col-12 depicted-product__img-list slider-nav">
         <img
           v-for="(image, index) in images"
@@ -50,9 +49,10 @@
             <i class="fab fa-twitter-square social-share--twitter"></i>
           </a>
         </div>
-        <div class="depicted-product__social-like">
-          <i class="far fa-heart social-like--heart"></i>
-          <span class="depicted-product__social-like__number">Đã thích (6,7k)</span>
+        <div class="depicted-product__social-like" @click="handleLikeProduct">
+          <i class="fas fa-heart social-like--heart" v-if="product.isLiked"></i>
+          <i class="far fa-heart social-like--heart" v-else></i>
+          <span class="depicted-product__social-like__number">Đã thích ({{ product.totalLiked }})</span>
         </div>
       </div>
     </div>
@@ -61,6 +61,8 @@
 
 <script>
 import VueEasyLightbox from 'vue-easy-lightbox'
+import { likeProduct } from '@/api/product/index'
+import _ from 'lodash'
 
 export default {
   name: 'DepictedProduct',
@@ -70,24 +72,29 @@ export default {
       type: Array,
       required: true
     },
-    mainImageProduct: {
-      type: String,
-      required: true
-    },
-    productName: {
-      type: String,
+    productDetail: {
+      type: Object,
       required: true
     }
   },
   data () {
     return {
-      imgs: [], // Img Url , string or Array of string
+      imgs: [],
+      product: {},
       visible: false,
       index: 0 // default: 0
     }
   },
-  mounted () {
-
+  created () {
+    this.product = _.cloneDeep(this.productDetail)
+  },
+  watch: {
+    images (newValue) {
+      this.imgs = _.cloneDeep(newValue)
+    },
+    productDetail (newValue) {
+      this.product = _.cloneDeep(newValue)
+    }
   },
   methods: {
     showLightBox (index) {
@@ -103,6 +110,30 @@ export default {
     },
     handleHide () {
       this.visible = false
+    },
+    handleLikeProduct () {
+      if (!this.$store.getters.isLogin) {
+        this.$message.error({ content: 'Bạn chưa login!' })
+      } else {
+        const params = {
+          currentUserId: this.$store.getters.userId,
+          productId: this.product.id
+        }
+        likeProduct(params).then(rs => {
+          if (rs) {
+            const mes = this.product.isLiked ? 'Hủy yêu thích sản phẩm thành công!' : 'Yêu thích sản phẩm thành công!'
+            this.$message.success({ content: mes })
+            this.product.totalLiked = this.product.isLiked ? this.product.totalLiked - 1 : this.product.totalLiked + 1
+            this.product.isLiked = !this.product.isLiked
+          } else {
+            const mes = this.product.isLiked ? 'Hủy yêu thích sản phẩm thất bại!' : 'Yêu thích sản phẩm thất bại!'
+            this.$message.error({ content: mes })
+          }
+        }).catch(err => {
+          const mes = this.handleApiError(err)
+          this.$message.error({ content: mes })
+        })
+      }
     }
   }
 }
@@ -174,6 +205,7 @@ export default {
     display: flex;
     align-items: center;
     margin-left: 6px;
+    cursor: pointer;
 }
 
 </style>

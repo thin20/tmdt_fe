@@ -7,6 +7,7 @@ const api = {
   // product
   searchListProduct: 'product/search-list',
   likeProduct: 'productUserLiked/likeProduct',
+  getProductDetail: 'product/getProductDetail',
 
   // category
   getListCategory: 'category/getListCategory',

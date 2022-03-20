@@ -30,9 +30,9 @@ export default {
 </script>
 
 <style>
-:root {
-  --primary-color: rgb(238,77,45);
-}
+/*:root {*/
+/*  --primary-color: rgb(238,77,45);*/
+/*}*/
 .auth__container {
   width: 100%;
   min-width: 120rem;
