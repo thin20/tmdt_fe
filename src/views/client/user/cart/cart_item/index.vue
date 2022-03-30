@@ -70,7 +70,7 @@ export default {
     },
     handleSubQuantityProduct () {
       if (this.bill.quantity > 1) {
-        this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: this.bill.quantity - 1 }).then(rs => {
+        this.$store.dispatch('ChangeQuantityProductInCart', { billId: this.bill.billId, quantity: this.bill.quantity - 1 }).then(rs => {
           if (rs) {
             this.$message.success({ content: 'Giảm số lượng sản phẩm thành công!' })
           }
@@ -82,7 +82,7 @@ export default {
     },
     handleAddQuantityProduct () {
       if (this.bill.quantity < this.bill.product.quantity) {
-        this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: this.bill.quantity + 1 }).then(rs => {
+        this.$store.dispatch('ChangeQuantityProductInCart', { billId: this.bill.billId, quantity: this.bill.quantity + 1 }).then(rs => {
           if (rs) {
             this.$message.success({ content: 'Tăng số lượng sản phẩm thành công!' })
           }
@@ -101,25 +101,34 @@ export default {
       if (value > this.bill.product.quantity) {
         value = this.bill.product.quantity
       }
-      this.$store.dispatch('ChangeQuantityProductInCart', { idBill: this.bill.id, quantity: value }).then(rs => {
-        if (rs) {
-          this.$message.success({ content: 'Thay đổi lượng sản phẩm thành công!' })
-        }
-      }).catch((err) => {
-        const mes = this.handleApiError(err)
-        this.$error({ content: mes })
-      })
+      if (this.bill.product.quantity === 0) {
+        this.handleDeleteProduct()
+      } else {
+        this.$store.dispatch('ChangeQuantityProductInCart', { billId: this.bill.billId, quantity: value }).then(rs => {
+          if (rs) {
+            this.$message.success({ content: 'Thay đổi lượng sản phẩm thành công!' })
+          }
+        }).catch((err) => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        })
+      }
     },
     handleDeleteProduct () {
-      this.$store.dispatch('RemoveProductsInCart', [this.bill.id]).then(rs => {
-        this.$message.success({ content: 'Xóa sản phẩm khỏi giỏ hàng thành công!' })
-      }).catch((err) => {
-        const mes = this.handleApiError(err)
-        this.$error({ content: mes })
+      const _this = this
+      this.$confirm({ content: 'Bạn có chắc chăn muốn xóa sản phẩm khỏi giỏ hàng?',
+        onOk: () => {
+          _this.$store.dispatch('RemoveProductInCart', this.bill.billId).then(rs => {
+            _this.$message.success({ content: 'Xóa sản phẩm khỏi giỏ hàng thành công!' })
+          }).catch((err) => {
+            const mes = _this.handleApiError(err)
+            this.$error({ content: mes })
+          })
+        }
       })
     },
     handleChecked () {
-      this.$emit('productChecked', { idBill: this.bill.id })
+      this.$emit('productChecked', { billId: this.bill.billId })
     }
   }
 }

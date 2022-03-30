@@ -48,8 +48,8 @@
               v-for="(item, index) in listBillBySeller"
               :key="index"
               :index="index"
-              :idSeller="item.idSeller"
-              :seller="item.seller"
+              :sellerId="item.sellerId"
+              :seller="item.sellerName"
               :bills="item.bills"
               @productChecked="handleProductChecked"
               @cartShopChecked="handleCartShopChecked"
@@ -143,6 +143,7 @@ export default {
   created () {
     this.$store.dispatch('GetListBillBySeller').then(rs => {
       this.listBillBySeller = rs
+      console.log('listBillBySeller: ', rs)
     }).catch(err => {
       const mes = this.handleApiError(err)
       this.$error({ content: mes })
@@ -166,6 +167,7 @@ export default {
       }
     })
 
+    this.$store.dispatch('GetListBillBySeller')
     this.getAddressDefault()
   },
   data () {
@@ -194,11 +196,11 @@ export default {
     }
   },
   methods: {
-    handleProductChecked ({ idBill }) {
+    handleProductChecked ({ billId }) {
       const newList = _.cloneDeep(this.listBillBySeller)
       newList.forEach(item => {
         item.bills.forEach(bill => {
-          if (bill.id === idBill) {
+          if (bill.billId === billId) {
             bill.checked = !bill.checked
           }
         })
@@ -207,10 +209,10 @@ export default {
       this.checkedAll = this.isCheckAll()
       this.calcTotalPrice()
     },
-    handleCartShopChecked ({ idSeller, checkto }) {
+    handleCartShopChecked ({ sellerId, checkto }) {
       const newList = _.cloneDeep(this.listBillBySeller)
       newList.forEach(item => {
-        if (item.idSeller === idSeller) {
+        if (item.sellerId === sellerId) {
           item.bills.forEach(bill => {
             bill.checked = checkto
           })
@@ -230,6 +232,7 @@ export default {
       })
       this.listBillBySeller = newList
       this.checkedAll = !this.checkedAll
+      this.calcTotalPrice()
       // this.keyRerender = !this.keyRerender
     },
     isCheckAll () {
@@ -265,7 +268,7 @@ export default {
       this.listBillBySeller.forEach(item => {
         item.bills.forEach(bill => {
           if (bill.checked) {
-            billIds.push(bill.id)
+            billIds.push(bill.billId)
           }
         })
       })
@@ -276,7 +279,7 @@ export default {
       this.listBillBySeller.forEach(item => {
         item.bills.forEach(bill => {
           if (bill.checked) {
-            billIds = billIds.concat([bill.id])
+            billIds = billIds.concat([bill.billId])
           }
         })
       })

@@ -51,7 +51,7 @@ export default {
       type: Number,
       required: true
     },
-    idSeller: {
+    sellerId: {
       type: Number,
       required: true
     },
@@ -79,12 +79,12 @@ export default {
     this.checkedAll = this.isCheckAll()
   },
   methods: {
-    handleProductChecked ({ idBill }) {
-      this.$emit('productChecked', { idBill })
+    handleProductChecked ({ billId }) {
+      this.$emit('productChecked', { billId })
       this.checkedAll = this.isCheckAll()
     },
     handleCheckAll () {
-      this.$emit('cartShopChecked', { idSeller: this.idSeller, checkto: !this.isCheckAll() })
+      this.$emit('cartShopChecked', { sellerId: this.sellerId, checkto: !this.isCheckAll() })
     },
     isCheckAll () {
       let isCheckAll = true

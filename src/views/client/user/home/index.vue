@@ -84,7 +84,7 @@ export default {
       this.loadingListProduct = true
       searchListProduct(params).then(rs => {
         if (rs) {
-          if (this.currentPage <= rs.page_meta.total_page) this.currentPage += 1
+          if (this.currentPage <= rs.page_meta.total_pages) this.currentPage += 1
           this.listProduct = this.listProduct.concat(rs.data)
         }
       }).catch(err => {
