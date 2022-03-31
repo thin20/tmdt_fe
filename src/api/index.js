@@ -17,7 +17,9 @@ const api = {
   getListBillBySellerInCart: 'bill/cart',
   addToCart: '/bill/addToCart',
   updateQuantityProductInCart: '/bill/updateQuantityProductInCart',
-  deleteProductInCart: '/bill/deleteProductInCart'
+  deleteProductInCart: '/bill/deleteProductInCart',
+  deleteProductsInCart: '/bill/deleteProductsInCart',
+  buyProducts: 'bill/buyProducts'
 }
 
 export default api

@@ -1,30 +1,32 @@
 <template>
   <div class="container app__container">
-    <div class="row product">
-      <div class="col col-lg-5 col-md-5 col-sm-12">
-        <!-- depicted product -->
-        <depicted-product
-          :images="depicted"
-          :product-detail="productDetail">
-        </depicted-product>
-      </div>
+    <a-spin :spinning="loading" style="width: 100%; height: 300px;">
+      <div class="row product">
+        <div class="col col-lg-5 col-md-5 col-sm-12">
+          <!-- depicted product -->
+          <depicted-product
+            :images="depicted"
+            :product-detail="productDetail">
+          </depicted-product>
+        </div>
 
-      <div class="col col-lg-7 col-md-7 col-sm-12">
-        <!-- sale product -->
-        <sale-product :product="productDetail"></sale-product>
-        <!-- guarantee product -->
-        <a class="guarantee-product" href="#">
-          <div>
-            <img
-              src="@/assets/img/GuaranteeProduct.png"
-              alt="guarantee product"
-              class="guarantee-product-img">
-            <span class="guarantee-product-title">Shopee Đảm Bảo</span>
-          </div>
-          <span class="guarantee-product-desc">3 Ngày Trả Hàng / Hoàn Tiền</span>
-        </a>
+        <div class="col col-lg-7 col-md-7 col-sm-12">
+          <!-- sale product -->
+          <sale-product :product="productDetail"></sale-product>
+          <!-- guarantee product -->
+          <a class="guarantee-product" href="#">
+            <div>
+              <img
+                src="@/assets/img/GuaranteeProduct.png"
+                alt="guarantee product"
+                class="guarantee-product-img">
+              <span class="guarantee-product-title">Shopee Đảm Bảo</span>
+            </div>
+            <span class="guarantee-product-desc">3 Ngày Trả Hàng / Hoàn Tiền</span>
+          </a>
+        </div>
       </div>
-    </div>
+    </a-spin>
     <div class="row product mt-5 p-5">
       <!-- detail product -->
       <detail-product :product-detail="productDetail"></detail-product>
@@ -49,6 +51,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       comment: [],
       depicted: [],
       productDetail: {},
@@ -76,6 +79,7 @@ export default {
       return arrayTruncate[arrayTruncate.length - 1]
     },
     getProductDetail (productId) {
+      this.loading = true
       const params = {
         currentUserId: this.$store.getters.isLogin ? this.$store.getters.userId : undefined,
         productId: productId
@@ -93,6 +97,8 @@ export default {
         const mes = this.handleApiError(err)
         this.$message.error({ content: mes })
         this.$router.push({ name: 'home' })
+      }).finally(() => {
+        this.loading = false
       })
     }
     // onSubmitCreateComment (commentText, listFileImage, star) {

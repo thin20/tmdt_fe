@@ -30,3 +30,19 @@ export function deleteProductInCart ({ billId }) {
     method: 'delete'
   })
 }
+
+export function deleteProductsInCart (params) {
+  return axios({
+    url: api.deleteProductsInCart,
+    method: 'delete',
+    data: params
+  })
+}
+
+export function buyProducts (params) {
+  return axios({
+    url: api.buyProducts,
+    method: 'post',
+    data: params
+  })
+}

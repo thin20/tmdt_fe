@@ -141,9 +141,10 @@ export default {
     }
   },
   created () {
+    if (!this.$store.getters.isLogin) this.backToHome()
+
     this.$store.dispatch('GetListBillBySeller').then(rs => {
       this.listBillBySeller = rs
-      console.log('listBillBySeller: ', rs)
     }).catch(err => {
       const mes = this.handleApiError(err)
       this.$error({ content: mes })
@@ -151,6 +152,8 @@ export default {
     this.$store.dispatch('getUserAddress')
   },
   mounted () {
+    if (!this.$store.getters.isLogin) this.backToHome()
+
     const newList = _.cloneDeep(this.listBillBySellerInCart)
     newList.forEach(item => {
       item.bills.forEach(bill => {
@@ -263,7 +266,6 @@ export default {
       this.totalProductChecked = totalProductChecked
     },
     handleRemoveProducts () {
-      // let arrPromise = []
       const billIds = []
       this.listBillBySeller.forEach(item => {
         item.bills.forEach(bill => {
@@ -272,7 +274,23 @@ export default {
           }
         })
       })
-      this.$store.dispatch('RemoveProductsInCart', billIds)
+
+      if (billIds.length > 0) {
+        this.$confirm({ content: 'Bạn có chắn chắn muốn xóa sản phẩm khỏi giỏ hàng?',
+          onOk: () => {
+            this.$store.dispatch('RemoveProductsInCart', billIds).then(rs => {
+              if (rs) {
+                this.$message.success({ content: 'Xóa sản phẩm khỏi giỏ hàng thành công!' })
+              }
+            }).catch(err => {
+              const mes = this.handleApiError(err)
+              this.$error({ content: mes })
+            })
+          }
+        })
+      } else {
+        this.$message.warn({ content: 'Bạn chưa chọn sản phẩm nào!' })
+      }
     },
     buyProducts () {
       let billIds = []
@@ -283,7 +301,23 @@ export default {
           }
         })
       })
-      this.$store.dispatch('BuyProductsInCart', billIds)
+      if (billIds.length > 0) {
+        this.$confirm({ content: 'Bạn có chắc chắn muốn mua sản phẩm?',
+          onOk: () => {
+            this.$store.dispatch('BuyProductsInCart', billIds).then(rs => {
+              if (rs) {
+                this.$message.success({ content: 'Mua sản phẩm thành công!' })
+                this.push({ name: 'purchase' })
+              }
+            }).catch(err => {
+              const mes = this.handleApiError(err)
+              this.$error({ content: mes })
+            })
+          }
+        })
+      } else {
+        this.$message.warn({ content: 'Bạn chưa chọn sản phẩm nào!' })
+      }
       // this.keyRerender = !this.keyRerender
     },
     backToHome () {

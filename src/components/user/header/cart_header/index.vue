@@ -58,7 +58,11 @@ export default {
     }
   },
   mounted () {
-    this.listProductInCart = this.$store.dispatch('GetListBillBySeller')
+    if (this.$store.getters.isLogin) {
+      this.listProductInCart = this.$store.dispatch('GetListBillBySeller')
+    } else {
+      this.listProductInCart = []
+    }
   },
   created () {
     if (this.$store.getters.isLogin) {

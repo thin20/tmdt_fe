@@ -1,4 +1,10 @@
-import { getListBillBySellerInCart, updateQuantityProductInCart, deleteProductInCart } from '@/api/cart/index'
+import {
+  getListBillBySellerInCart,
+  addToCart,
+  updateQuantityProductInCart,
+  deleteProductInCart,
+  deleteProductsInCart, buyProducts
+} from '@/api/cart/index'
 import store from '@/store/index'
 
 const cart = {
@@ -39,6 +45,18 @@ const cart = {
     SetListBillBySeller: ({ commit }, newList) => {
       commit('SET_LIST_BILL_BY_SELLER', newList)
     },
+    AddToCart ({ dispatch, state }, params) {
+      return new Promise((resolve, reject) => {
+        addToCart(params).then(rs => {
+          if (rs) {
+            dispatch('GetListBillBySeller')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     ChangeQuantityProductInCart: ({ dispatch, state }, params) => {
       return new Promise((resolve, reject) => {
         updateQuantityProductInCart(params).then(rs => {
@@ -66,16 +84,34 @@ const cart = {
         })
       })
     },
-    RemoveProductsInCart: ({ dispatch, state }, listBillId) => {
+    RemoveProductsInCart: ({ dispatch, state }, billIds) => {
+      const params = {
+        billIds: billIds
+      }
       return new Promise((resolve, reject) => {
-        resolve(listBillId)
+        deleteProductsInCart(params).then(rs => {
+          if (rs) {
+            dispatch('GetListBillBySeller')
+            resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
-    BuyProductsInCart: ({ dispatch, state }, listBillId) => {
-      // TODO call api buy list product in cart
+    BuyProductsInCart: ({ dispatch, state }, billIds) => {
+      const params = {
+        billIds: billIds
+      }
       return new Promise((resolve, reject) => {
-        console.log('list billIds buy: ', listBillId)
-        resolve(listBillId)
+        buyProducts(params).then(rs => {
+          if (rs) {
+            dispatch('GetListBillBySeller')
+            resolve(true)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     GetListProductInCart: ({ state }) => {

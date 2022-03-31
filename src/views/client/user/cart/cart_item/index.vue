@@ -233,14 +233,17 @@ export default {
 
 .btn-sub-quantity, .btn-add-quantity:active {
     outline: none;
+    border: 1px solid #c3c3c3;
 }
 
 .btn-sub-quantity:focus {
     outline: none;
+  border: 1px solid #c3c3c3;
 }
 
 .btn-add-quantity:focus {
     outline: none;
+  border: 1px solid #c3c3c3;
 }
 
 .input-quantity {
