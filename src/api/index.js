@@ -11,7 +11,15 @@ const api = {
 
   // category
   getListCategory: 'category/getListCategory',
-  getListCategoryParent: 'category/getListCategoryParent'
+  getListCategoryParent: 'category/getListCategoryParent',
+
+  // cart
+  getListBillBySellerInCart: 'bill/cart',
+  addToCart: '/bill/addToCart',
+  updateQuantityProductInCart: '/bill/updateQuantityProductInCart',
+  deleteProductInCart: '/bill/deleteProductInCart',
+  deleteProductsInCart: '/bill/deleteProductsInCart',
+  buyProducts: 'bill/buyProducts'
 }
 
 export default api

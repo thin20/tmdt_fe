@@ -108,8 +108,12 @@
           </div>
           <div class="product-option__select">
             <div>
-              <button type="button" class="product-option-btn btn-add-to-cart" @click="addToCart">Thêm vào giỏ hàng</button>
-              <button type="button" class="product-option-btn btn-buy-now" @click="buyRightNow">Mua ngay</button>
+              <button :loading="loadingButton" type="button" class="product-option-btn btn-add-to-cart" @click="addToCart">
+                <a-spin :spinning="loadingButton">Thêm vào giỏ hàng</a-spin>
+              </button>
+              <button :loading="loadingButton" type="button" class="product-option-btn btn-buy-now" @click="buyRightNow">
+                <a-spin :spinning="loadingButton">Mua ngay</a-spin>
+              </button>
             </div>
           </div>
         </template>
@@ -132,7 +136,8 @@ export default {
   },
   data () {
     return {
-      selectQuantity: 1
+      selectQuantity: 1,
+      loadingButton: false
     }
   },
   computed: {
@@ -157,25 +162,33 @@ export default {
     },
     createBill (callback) {
       this.checkLoginToRedirect(() => {
-        // addToCart(this.product.id, this.selectQuantity).then((response) => {
-        //   const { status } = response.data
-        //   if (status === 200) {
-        //     callback()
-        //   }
-        // })
+        this.loadingButton = true
+        const params = {
+          productId: this.product.id,
+          quantity: this.selectQuantity
+        }
+        this.$store.dispatch('AddToCart', params).then(rs => {
+          if (rs) {
+            callback()
+          }
+        }).catch(err => {
+          const mes = this.handleApiError(err)
+          this.$message.error({ content: mes })
+        }).finally(() => {
+          this.loadingButton = false
+        })
       })
     },
 
     addToCart () {
       this.createBill(() => {
-        this.$toast.open('Thêm vào giỏ hàng thành công')
-        // this.$store.dispatch('GetListBillBySeller')
+        this.$message.success({ content: 'Thêm sản phẩm vào giỏ hàng thành công!' })
       })
     },
     buyRightNow () {
       this.createBill(() => {
-        this.$toast.open('Thêm vào giỏ hàng thành công')
-        // this.$router.push({ path: '/cart' })
+        this.$message.success({ content: 'Thêm sản phẩm vào giỏ hàng thành công!' })
+        this.$router.push({ name: 'cart' })
       })
     }
   }
@@ -472,6 +485,12 @@ export default {
 
 .btn-add-to-cart:hover {
     background: rgba(255,87,34,.2);
+    color: var(--primary-color);
+}
+
+.btn-add-to-cart:active {
+    background: rgba(255,87,34,.2);
+    color: var(--primary-color);
 }
 
 .btn-buy-now {
@@ -483,6 +502,12 @@ export default {
 
 .btn-buy-now:hover {
     background-color: rgba(255, 87, 34, .9);
+    color: #fff;
+}
+
+.btn-buy-now:active {
+    background-color: rgba(255, 87, 34, .9);
+    color: #fff;
 }
 
 </style>

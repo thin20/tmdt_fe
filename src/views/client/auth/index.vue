@@ -30,13 +30,10 @@ export default {
 </script>
 
 <style>
-/*:root {*/
-/*  --primary-color: rgb(238,77,45);*/
-/*}*/
 .auth__container {
   width: 100%;
   min-width: 120rem;
-  background-color: var(--primary-color);
+  background-color: rgb(238,77,45);
 }
 .auth__content {
   display: flex;

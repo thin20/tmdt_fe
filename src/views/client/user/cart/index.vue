@@ -48,8 +48,8 @@
               v-for="(item, index) in listBillBySeller"
               :key="index"
               :index="index"
-              :idSeller="item.idSeller"
-              :seller="item.seller"
+              :sellerId="item.sellerId"
+              :seller="item.sellerName"
               :bills="item.bills"
               @productChecked="handleProductChecked"
               @cartShopChecked="handleCartShopChecked"
@@ -141,6 +141,8 @@ export default {
     }
   },
   created () {
+    if (!this.$store.getters.isLogin) this.backToHome()
+
     this.$store.dispatch('GetListBillBySeller').then(rs => {
       this.listBillBySeller = rs
     }).catch(err => {
@@ -150,6 +152,8 @@ export default {
     this.$store.dispatch('getUserAddress')
   },
   mounted () {
+    if (!this.$store.getters.isLogin) this.backToHome()
+
     const newList = _.cloneDeep(this.listBillBySellerInCart)
     newList.forEach(item => {
       item.bills.forEach(bill => {
@@ -166,6 +170,7 @@ export default {
       }
     })
 
+    this.$store.dispatch('GetListBillBySeller')
     this.getAddressDefault()
   },
   data () {
@@ -194,11 +199,11 @@ export default {
     }
   },
   methods: {
-    handleProductChecked ({ idBill }) {
+    handleProductChecked ({ billId }) {
       const newList = _.cloneDeep(this.listBillBySeller)
       newList.forEach(item => {
         item.bills.forEach(bill => {
-          if (bill.id === idBill) {
+          if (bill.billId === billId) {
             bill.checked = !bill.checked
           }
         })
@@ -207,10 +212,10 @@ export default {
       this.checkedAll = this.isCheckAll()
       this.calcTotalPrice()
     },
-    handleCartShopChecked ({ idSeller, checkto }) {
+    handleCartShopChecked ({ sellerId, checkto }) {
       const newList = _.cloneDeep(this.listBillBySeller)
       newList.forEach(item => {
-        if (item.idSeller === idSeller) {
+        if (item.sellerId === sellerId) {
           item.bills.forEach(bill => {
             bill.checked = checkto
           })
@@ -230,6 +235,7 @@ export default {
       })
       this.listBillBySeller = newList
       this.checkedAll = !this.checkedAll
+      this.calcTotalPrice()
       // this.keyRerender = !this.keyRerender
     },
     isCheckAll () {
@@ -260,27 +266,62 @@ export default {
       this.totalProductChecked = totalProductChecked
     },
     handleRemoveProducts () {
-      // let arrPromise = []
       const billIds = []
       this.listBillBySeller.forEach(item => {
         item.bills.forEach(bill => {
           if (bill.checked) {
-            billIds.push(bill.id)
+            billIds.push(bill.billId)
           }
         })
       })
-      this.$store.dispatch('RemoveProductsInCart', billIds)
+
+      if (billIds.length > 0) {
+        this.$confirm({ content: 'Bạn có chắn chắn muốn xóa sản phẩm khỏi giỏ hàng?',
+          onOk: () => {
+            this.$store.dispatch('RemoveProductsInCart', billIds).then(rs => {
+              if (rs) {
+                this.$message.success({ content: 'Xóa sản phẩm khỏi giỏ hàng thành công!' })
+              }
+            }).catch(err => {
+              const mes = this.handleApiError(err)
+              this.$error({ content: mes })
+            })
+          }
+        })
+      } else {
+        this.$message.warn({ content: 'Bạn chưa chọn sản phẩm nào!' })
+      }
     },
     buyProducts () {
       let billIds = []
       this.listBillBySeller.forEach(item => {
         item.bills.forEach(bill => {
           if (bill.checked) {
-            billIds = billIds.concat([bill.id])
+            billIds = billIds.concat([bill.billId])
           }
         })
       })
-      this.$store.dispatch('BuyProductsInCart', billIds)
+      if (billIds.length > 0) {
+        this.$confirm({ content: 'Bạn có chắc chắn muốn mua sản phẩm?',
+          onOk: () => {
+            const params = {
+              addressId: this.addressChecked,
+              billIds: billIds
+            }
+            this.$store.dispatch('BuyProductsInCart', params).then(rs => {
+              if (rs) {
+                this.$message.success({ content: 'Mua sản phẩm thành công!' })
+                this.push({ name: 'purchase' })
+              }
+            }).catch(err => {
+              const mes = this.handleApiError(err)
+              this.$error({ content: mes })
+            })
+          }
+        })
+      } else {
+        this.$message.warn({ content: 'Bạn chưa chọn sản phẩm nào!' })
+      }
       // this.keyRerender = !this.keyRerender
     },
     backToHome () {
