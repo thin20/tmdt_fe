@@ -304,7 +304,11 @@ export default {
       if (billIds.length > 0) {
         this.$confirm({ content: 'Bạn có chắc chắn muốn mua sản phẩm?',
           onOk: () => {
-            this.$store.dispatch('BuyProductsInCart', billIds).then(rs => {
+            const params = {
+              addressId: this.addressChecked,
+              billIds: billIds
+            }
+            this.$store.dispatch('BuyProductsInCart', params).then(rs => {
               if (rs) {
                 this.$message.success({ content: 'Mua sản phẩm thành công!' })
                 this.push({ name: 'purchase' })

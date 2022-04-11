@@ -99,10 +99,7 @@ const cart = {
         })
       })
     },
-    BuyProductsInCart: ({ dispatch, state }, billIds) => {
-      const params = {
-        billIds: billIds
-      }
+    BuyProductsInCart: ({ dispatch, state }, params) => {
       return new Promise((resolve, reject) => {
         buyProducts(params).then(rs => {
           if (rs) {
