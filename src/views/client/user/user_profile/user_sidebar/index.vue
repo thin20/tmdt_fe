@@ -20,7 +20,7 @@
         <div class="slideContent" style="padding-left : 31px">
           <router-link :to="{name: 'userInfo'}"><p style="padding: 8px 0; margin: 0;">Hồ sơ</p></router-link>
           <router-link :to="{name: 'userAddress'}"><p style="padding: 8px 0; margin: 0;">Địa chỉ</p></router-link>
-          <router-link :to="{name: 'userPass'}"><p style="padding: 8px 0; margin: 0;">Thêm Mật Khẩu</p></router-link>
+          <router-link :to="{name: 'userPass'}"><p style="padding: 8px 0; margin: 0;">Đổi Mật Khẩu</p></router-link>
         </div>
       </div>
       <div class="depth-1 mb-3">

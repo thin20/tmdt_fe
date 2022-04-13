@@ -3,6 +3,15 @@ const api = {
   login: '/user/login',
   loginByToken: '/user/loginByToken',
   register: '/user/register',
+  updateUserInfo: '/user/updateUserInfo',
+  changePassword: '/user/changePassword',
+
+  // address
+  getListAddress: '/address/getListAddress',
+  createUserAddress: '/address/createUserAddress',
+  updateUserAddress: '/address/updateUserAddress',
+  deleteUserAddress: '/address/deleteUserAddress',
+  setAddressDefault: '/address/setAddressDefault',
 
   // product
   searchListProduct: 'product/search-list',

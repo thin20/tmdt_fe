@@ -2,7 +2,7 @@
   <div class="purchase-list-page__empty-page-wrapper h-full">
     <div class="d-flex justify-content-between">
       <h2>Địa chỉ của tôi</h2>
-      <div @click="handleOpenModalCreate" class="h-button__red p-4 h-color__white cursor-pointer" id="btn-open-modal-add-address" data-toggle="modal" data-target="#modal-add-address">
+      <div style="cursor: pointer; border-radius: 3px;" @click="handleOpenModalCreate" class="h-button__red p-4 h-color__white cursor-pointer" data-toggle="modal" data-target="#modal-add-address">
         <i class="fas fa-plus"></i>
         <span class="mx-2"> Thêm địa chỉ </span>
       </div>
@@ -32,7 +32,7 @@
             Số điện thoại
           </div>
           <div class="address-display__field-value flex-1">
-            {{ address.recipientNumberPhone }}
+            {{ address.recipientPhoneNumber }}
           </div>
         </div>
         <div class="d-flex mb-4">
@@ -52,7 +52,7 @@
           <p class="text-decoration-underline mr-3" style="cursor: pointer;" @click="handleOpenModalUpdate(address)">Sửa</p>
           <p class="text-decoration-underline" style="cursor: pointer;" v-if="!address.isDefault" @click="handleDeleteUserAddress(address.id)">Xóa</p>
         </div>
-        <div class=" p-2 btn-light cursor-pointer" v-if="!address.isDefault" @click="setDeliveryAddress(address.id)">
+        <div class="p-2 btn-light" style="cursor: pointer;" v-if="!address.isDefault" @click="setDeliveryAddress(address.id)">
           <span class="mx-2"> Thiết lập mặc định </span>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default {
         latitude: '',
         longitude: '',
         recipientName: '',
-        recipientNumberPhone: '',
+        recipientPhoneNumber: '',
         isDefault: 0
       }
     }
@@ -99,6 +99,9 @@ export default {
   created () {
     this.getData()
   },
+  mounted () {
+    this.getData()
+  },
   methods: {
     getData () {
       this.$store.dispatch('getUserAddress')
@@ -106,7 +109,7 @@ export default {
     handleDeleteUserAddress (id) {
       this.$confirm({ content: 'Bạn có chắc chắn muốn xóa địa chỉ?',
         onOk: () => {
-          this.$store.dispatch('removeUserAddress', { idAddress: id }).then(rs => {
+          this.$store.dispatch('removeUserAddress', { addressId: id }).then(rs => {
             this.$message.success({ content: 'Xóa địa chỉ thành công!' })
           }).catch(() => {
             this.$message.error({ content: 'Xóa địa chỉ thất bại!' })
@@ -115,7 +118,7 @@ export default {
       })
     },
     setDeliveryAddress (id) {
-      this.$store.dispatch('updateUserAddressDefault', { idAddress: id }).then(rs => {
+      this.$store.dispatch('setAddressDefault', { addressId: id }).then(rs => {
         this.$message.success({ content: 'Đặt địa chỉ mặc định thành công!' })
       }).catch(() => {
         this.$message.error({ content: 'Đặt địa chỉ mặc định thất bại!' })
@@ -141,7 +144,7 @@ export default {
         latitude: '',
         longitude: '',
         recipientName: '',
-        recipientNumberPhone: '',
+        recipientPhoneNumber: '',
         isDefault: this.listUserAddress.length > 0 ? 0 : 1
       }
     },

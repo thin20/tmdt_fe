@@ -4,7 +4,7 @@ import {
   updateQuantityProductInCart,
   deleteProductInCart,
   deleteProductsInCart, buyProducts
-} from '@/api/cart/index'
+} from '@/api/cart/index.js'
 import store from '@/store/index'
 
 const cart = {

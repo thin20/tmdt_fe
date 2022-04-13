@@ -41,7 +41,7 @@
             <a-col :span="12" class="filter-item-container">
               <span>Số điện thoại <span style="color: red;"> *</span></span>
               <a-form-model-item
-                prop="recipientNumberPhone"
+                prop="recipientPhoneNumber"
                 :rules="[
                   {
                     required: true,
@@ -52,7 +52,7 @@
                 <a-input
                   placeholder="Số điện thoại"
                   size="large"
-                  v-model="form.recipientNumberPhone"
+                  v-model="form.recipientPhoneNumber"
                   style="width: 100%"
                 ></a-input>
               </a-form-model-item>
@@ -134,7 +134,7 @@
             <a-col :span="12" class="filter-item-container">
               <span>Địa chỉ cụ thể <span style="color: red;"> *</span></span>
               <a-form-model-item
-                prop="address"
+                prop="detailAddress"
                 :rules="[
                   {
                     required: true,
@@ -144,7 +144,7 @@
                 ]"
               >
                 <a-input
-                  v-model="form.address"
+                  v-model="form.detailAddress"
                   placeholder="Địa chỉ cụ thể"
                   size="large"
                   style="width: 100%"
@@ -208,13 +208,13 @@ export default {
       form: {
         city: '',
         id_user: '',
-        address: '',
+        detailAddress: '',
         district: '',
         ward: '',
         latitude: '',
         longitude: '',
         recipientName: '',
-        recipientNumberPhone: '',
+        recipientPhoneNumber: '',
         isDefault: 0
       },
       provinceCode: null,
@@ -359,7 +359,7 @@ export default {
       this.getListWard()
     },
     handleFindCurrentAddress () {
-      const keyword = this.form.address + ' ' + this.form.ward + ' ' + this.form.district + ' ' + this.form.city
+      const keyword = this.form.detailAddress + ' ' + this.form.ward + ' ' + this.form.district + ' ' + this.form.city
       this.getLocation(keyword)
     },
     onChangeCheckedDefault (e) {
@@ -371,46 +371,36 @@ export default {
           if (this.form.latitude >= 0 && this.form.longitude >= 0) {
             if (this.isCreated && !this.form.id) {
               const params = {
-                city: this.form.city,
-                country: 'Việt Nam',
-                address: this.form.address,
-                ward: this.form.ward,
-                district: this.form.district,
                 recipientName: this.form.recipientName,
-                recipientNumberPhone: this.form.recipientNumberPhone,
-                isDefault: this.form.isDefault,
+                recipientPhoneNumber: this.form.recipientPhoneNumber,
+                city: this.form.city,
+                district: this.form.district,
+                ward: this.form.ward,
+                detailAddress: this.form.detailAddress,
                 latitude: Number.parseFloat(this.form.latitude),
                 longitude: Number.parseFloat(this.form.longitude)
               }
               this.$store.dispatch('createUserAddress', params).then(rs => {
-                this.$success({ content: 'Thêm mới địa chỉ thành công!',
-                  onOk: () => {
-                    this.closeModal()
-                  }
-                })
+                this.$message.success({ content: 'Thêm mới địa chỉ thành công!' })
+                this.closeModal()
               }).catch(() => {
                 this.$error({ content: 'Thêm mới địa chỉ thất bại!' })
               })
             } else {
               const params = {
                 id: this.form.id,
-                city: this.form.city,
-                country: 'Việt Nam',
-                address: this.form.address,
-                ward: this.form.ward,
-                district: this.form.district,
                 recipientName: this.form.recipientName,
-                recipientNumberPhone: this.form.recipientNumberPhone,
-                isDefault: this.form.isDefault,
-                latitude: this.form.latitude,
-                longitude: this.form.longitude
+                recipientPhoneNumber: this.form.recipientPhoneNumber,
+                city: this.form.city,
+                district: this.form.district,
+                ward: this.form.ward,
+                detailAddress: this.form.detailAddress,
+                latitude: Number.parseFloat(this.form.latitude),
+                longitude: Number.parseFloat(this.form.longitude)
               }
               this.$store.dispatch('updateUserAddress', params).then(rs => {
-                this.$success({ content: 'Cập nhật địa chỉ thành công!',
-                  onOk: () => {
-                    this.closeModal()
-                  }
-                })
+                this.$success({ content: 'Cập nhật địa chỉ thành công!' })
+                this.closeModal()
               }).catch(() => {
                 this.$error({ content: 'Cập nhật địa chỉ thất bại!' })
               })

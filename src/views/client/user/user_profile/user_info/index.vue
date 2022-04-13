@@ -3,118 +3,118 @@
     <div>
       <h2>Hồ Sơ Của Tôi</h2>
       <p class="text-muted">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
-
     </div>
     <hr />
     <div class="d-flex p-3">
-      <div class="d-flex flex-column flex-70" style="flex: 1;padding: 0 40px;">
-        <div class="form-group d-flex form-field-item" style="align-items: center;">
-          <p class="control-label text-field" htmlfor="product_quantity" style="margin: 0 10px 0 0;">Tên</p>
-
-          <input
-            id="firstname"
-            name="product_quantity"
-            placeholder="Full Name"
-            class="form-control col-md-8 input-md"
-            type="text"
-            :value="firstName + ' ' + lastName "
-            style="
-                    flex-shrink: 1;
-                    font-size: 14px;"
-          >
-
-        </div>
-
-        <!--        <div class="form-group d-flex form-field-item" style="align-items: center; ">-->
-        <!--          <p-->
-        <!--            class="control-label text-field"-->
-        <!--            htmlfor="product_quantity"-->
-        <!--            style="margin: 0 10px 0 0;">Last Name</p>-->
-
-        <!--          <input-->
-        <!--            id="lastname"-->
-        <!--            name="product_quantity"-->
-        <!--            placeholder="Last Name"-->
-        <!--            class="form-control col-md-8 input-md"-->
-        <!--            type="text"-->
-        <!--            style="-->
-        <!--                    flex-shrink: 1;-->
-        <!--                    font-size: 14px;"-->
-        <!--            :value="$store.getters.userInfo.lastName"-->
-        <!--          >-->
-
-        <!--        </div>-->
+      <a-form-model ref="ruleForm" :model="form" class="d-flex flex-column flex-70" style="flex: 1;padding: 0 40px;">
         <div class="form-group d-flex form-field-item" style="align-items: center;">
           <p
             class="control-label text-field"
-            htmlfor="product_quantity"
-            style="margin: 0 10px 0 0;">Email
-          </p>
+            style="margin: 0 10px 0 0;">Số điện thoại</p>
           <div
             class="control-label"
-            htmlfor="product_quantity"
-            v-if="email"
-            style="margin: 0 10px 0 0;"> <span>{{ email }}</span>
-            <span class="control-label button__change-value"> Thay đổi </span>
+            style="margin: 0 10px 0 0;"> <span>{{ form.numberPhone }}</span>
           </div>
-          <div v-else>
+        </div>
+        <a-form-model-item
+          prop="firstName"
+          :rules="[
+            {
+              required: true,
+              message: 'Tên đệm không được để trống',
+              trigger: 'change'
+            },
+            {
+              max: 15,
+              message: 'Không vượt quá 15 ký tự',
+              trigger: 'change'
+            }
+          ]">
+          <div class="form-group d-flex form-field-item" style="align-items: center;">
+            <p class="control-label text-field" style="margin: 0 10px 0 0;">Tên đệm</p>
+            <a-input
+              placeholder="Tên đệm"
+              class="form-control col-md-8 input-md"
+              v-model="form.firstName"
+              @blur="DeepTrimValue(form)"
+              style="flex-shrink: 1;font-size: 14px;"></a-input>
+          </div>
+        </a-form-model-item>
+        <a-form-model-item
+          prop="lastName"
+          :rules="[
+            {
+              required: true,
+              message: 'Tên không được để trống',
+              trigger: 'change'
+            },
+            {
+              max: 15,
+              message: 'Không vượt quá 15 ký tự',
+              trigger: 'change'
+            }
+          ]">
+          <div class="form-group d-flex form-field-item" style="align-items: center;">
             <p
-              class="control-label button__change-value"
-              htmlfor="product_quantity"
-              style="margin: 0 10px 0 0;"> Thêm
-            </p>
+              class="control-label text-field"
+              style="margin: 0 10px 0 0;">Tên</p>
+            <a-input
+              placeholder="Tên"
+              class="form-control col-md-8 input-md"
+              v-model="form.lastName"
+              @blur="DeepTrimValue(form)"
+              style="flex-shrink: 1;font-size: 14px;"></a-input>
           </div>
-        </div>
-
-        <div class="form-group d-flex form-field-item" style="align-items: center;">
-          <p
-            class="control-label text-field"
-            htmlfor="product_quantity"
-            style="margin: 0 10px 0 0;">Số điện thoại
-          </p>
-          <div
-            class="control-label"
-            htmlfor="product_quantity"
-            v-if="numberPhone"
-            style="margin: 0 10px 0 0;"> <span>{{ numberPhone }}</span>
-            <span class="control-label button__change-value"> Thay đổi </span>
+        </a-form-model-item>
+        <a-form-model-item
+          prop="email">
+          <div class="form-group d-flex form-field-item" style="align-items: center;">
+            <p class="control-label text-field" style="margin: 0 10px 0 0;">Email</p>
+            <div
+              class="control-label"
+              v-if="form.email && !visibleEmail"
+              style="margin: 0 10px 0 0;"> <span>{{ form.email }}</span>
+              <span
+                class="control-label button__change-value"
+                @click="() => { visibleEmail = true }"> Thay đổi </span>
+            </div>
+            <div v-if="!form.email">
+              <p
+                class="control-label button__change-value"
+                style="margin: 0 10px 0 0;"
+                v-if="!visibleEmail"
+                @click="() => { visibleEmail = true }"> Thêm</p>
+            </div>
+            <a-input
+              placeholder="Email"
+              v-if="visibleEmail"
+              v-model="form.email"
+              class="form-control col-md-8 input-md"
+              @blur="DeepTrimValue"></a-input>
           </div>
-          <div v-else>
+        </a-form-model-item>
+        <a-form-model-item
+          prop="shobbeName"
+        >
+          <div class="form-group d-flex form-field-item" style="align-items: center;">
             <p
-              class="control-label button__change-value"
-              htmlfor="product_quantity"
-
-              style="margin: 0 10px 0 0;"> Thêm
+              class="control-label text-field"
+              style="margin: 0 10px 0 0;">Tên Shop
             </p>
+            <a-input
+              placeholder="Tên Shop"
+              class="form-control col-md-8 input-md"
+              style="flex-shrink: 1;font-size: 14px;"
+              @blur="DeepTrimValue(form)"
+              v-model="form.shobbeName"></a-input>
           </div>
-
+        </a-form-model-item>
+        <div class="d-flex" style="padding-left: calc(20% + 1.25rem);" @click="onUpdateInfoUser">
+          <a-spin :spinning="loading">
+            <button @click="handleUpdateUserInfo" type="button" class="h-button__red h-color__white cursor-pointer btn-save">Lưu</button>
+          </a-spin>
         </div>
-
-        <div class="form-group d-flex form-field-item" style="align-items: center;">
-          <p
-            class="control-label text-field"
-            htmlfor="product_quantity"
-            style="margin: 0 10px 0 0;">Tên Shop
-          </p>
-
-          <input
-            id="shopname"
-            name="product_quantity"
-            placeholder="Last Name"
-            class="form-control col-md-8 input-md"
-            type="text"
-            style="
-                    flex-shrink: 1;
-                    font-size: 14px;"
-            :value="shopName"
-          >
-
-        </div>
-
-        <div class="d-flex" style="    padding-left: calc(20% + 1.25rem);" @click="onUpdateInfoUser">
-          <button type="button" class="h-button__red h-color__white cursor-pointer btn-save" id="btn-save-user">Lưu</button>
-        </div>
-      </div>
+      </a-form-model>
       <div style="width: 26.5rem; border-left: 1px solid #efefef;">
         <div class="d-flex flex-column justify-content-center align-center align-items-center " style="margin: 0px 46px;">
           <div
@@ -129,13 +129,13 @@
                     background-position: center;
                     background-repeat: no-repeat;
                     background-size: cover;"
-            :style="{ backgroundImage: `url(${ photoUrl})`}"
+            :style="{ backgroundImage: `url(${ form.photoUrl})`}"
           ></div>
           <div class=" p-2 btn-light cursor-pointer mt-4">
             <span class="mx-2 " id="btn-choose-image-user" @click="openFolderChoosePicture">
               Chọn ảnh
             </span>
-            <input ref="inputChoosePicture" class="avatar-uploader__file-input" type="file" accept=".jpg,.jpeg,.png" @change="userChoosePhotoFromLocal">
+            <input ref="inputChoosePicture" class="avatar-uploader__file-input" type="file" accept=".jpg,.jpeg,.png" @change="userChoosePhotoFromLocal"/>
           </div>
           <p class="text-muted mt-3">
             Dụng lượng file tối đa 1 MB
@@ -148,71 +148,96 @@
 </template>
 
 <script>
-
-import { baseMixin } from '@/store/app-mixin'
-// import { getUserInfo } from '@/api/user/user'
-
+import { baseMixin } from '@/store/app-mixin.js'
 export default {
   name: 'UserInfo',
   mixins: [baseMixin],
-
-  data: function () {
+  data () {
     return {
-      // url preview
-      photoUrl: '',
-      // file to upload server
-      fileImage: null,
-      email: '',
-      numberPhone: '',
-      firstName: '',
-      lastName: '',
-      shopName: ''
+      form: {
+        // url preview
+        photoUrl: '',
+        // file to upload server
+        fileImage: null,
+        email: '',
+        numberPhone: '',
+        firstName: '',
+        lastName: '',
+        shobbeName: ''
+      },
+      visibleEmail: false,
+      loading: false
     }
   },
-
-  mounted () {
-    // TODO: get user info when login success then update to store
-      this.photoUrl = this.$store.getters.userInfo.info.photoURL
-      this.email = this.partialUserEmail
-      this.numberPhone = this.partialUserNumberPhone
-      this.firstName = this.$store.getters.userInfo.info.firstName
-      this.lastName = this.$store.getters.userInfo.info.lastName
-      this.shopName = this.$store.getters.userInfo.info.shopName
+  created () {
+    this.form = {
+      ...this.form,
+      photoUrl: this.$store.getters.userInfo.info.photoURL,
+      email: this.partialUserEmail,
+      numberPhone: this.partialUserNumberPhone,
+      firstName: this.$store.getters.userInfo.info.firstName,
+      lastName: this.$store.getters.userInfo.info.lastName,
+      shobbeName: this.$store.getters.userInfo.info.shobbeName
+    }
   },
   methods: {
     openFolderChoosePicture () {
       this.$refs.inputChoosePicture.click()
     },
-
     userChoosePhotoFromLocal (event) {
-      this.photoUrl = URL.createObjectURL(event.target.files[0])
-      this.fileImage = event.target.files[0]
+      this.form.photoUrl = URL.createObjectURL(event.target.files[0])
+      this.form.fileImage = event.target.files[0]
     },
-
     onUpdateInfoUser () {
       const dataUpdateUser = {
         // photoUrl: this.photoUrl,
-        email: this.$store.getters.userInfo.email,
-        numberPhone: this.$store.getters.userInfo.numberPhone,
-        firstName: this.firstName,
-        lastName: this.lastName
+        email: this.form.email,
+        firstName: this.form.firstName,
+        lastName: this.form.lastName,
+        shobbeName: this.form.shobbeName
       }
 
-      if (this.fileImage) dataUpdateUser.fileImage = this.fileImage
+      if (this.form.fileImage) dataUpdateUser.fileImage = this.form.fileImage
+    },
+    handleUpdateUserInfo () {
+      const _this = this
+      this.$confirm({
+        content: 'Bạn có chắc muốn cập nhật thông tin?',
+        onOk: () => {
+          _this.loading = true
+          _this.$refs.ruleForm.validate(valid => {
+            if (valid) {
+              const params = {
+                firstName: _this.form.firstName,
+                lastName: _this.form.lastName,
+                email: _this.form.email,
+                shobbeName: _this.form.shobbeName
+              }
+              _this.$store.dispatch('updateUserInfo', params).then(rs => {
+                _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
+              }).catch(err => {
+                const mes = _this.handleApiError(err)
+                _this.$error({ content: mes })
+              }).finally(() => {
+                _this.loading = false
+              })
+            }
+          })
+        }
+      })
     }
   }
 }
 </script>
 
 <style>
-
 .text-field{
   flex-basis: 20%;
   text-align: right;
 }
 
 .form-field-item{
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .button__change-value{
@@ -227,6 +252,10 @@ export default {
   min-width: 70px;
   max-width: 220px;
   border-radius: 5px;
+}
+
+.purchase-list-page__empty-page-wrapper .ant-form-explain {
+  margin-left: 125px;
 }
 
 </style>
