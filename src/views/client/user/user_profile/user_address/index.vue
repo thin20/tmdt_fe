@@ -8,11 +8,7 @@
       </div>
     </div>
     <hr />
-    <div class="list-address">
-
-    </div>
-    <div class="d-flex p-3 justify-between" v-for="(address) in listUserAddress" :key="address.id" style="border-bottom: 1px solid #ccc; padding-top: 10px;">
-
+    <div class="d-flex p-3 justify-between" v-for="(address, index) in listUserAddress" :key="index" style="border-bottom: 1px solid #ccc; padding-top: 10px;">
       <div class="d-flex flex-column flex-70">
         <div class="d-flex mb-4">
           <div class="address-display__field-label">
@@ -52,7 +48,7 @@
           <p class="text-decoration-underline mr-3" style="cursor: pointer;" @click="handleOpenModalUpdate(address)">Sửa</p>
           <p class="text-decoration-underline" style="cursor: pointer;" v-if="!address.isDefault" @click="handleDeleteUserAddress(address.id)">Xóa</p>
         </div>
-        <div class="p-2 btn-light" style="cursor: pointer;" v-if="!address.isDefault" @click="setDeliveryAddress(address.id)">
+        <div class="p-2 btn-light" style="cursor: pointer;" v-if="!address.isDefault" @click="setAddressDefault(address.id)">
           <span class="mx-2"> Thiết lập mặc định </span>
         </div>
       </div>
@@ -63,7 +59,6 @@
 
 <script>
 import ModalAddress from '@/components/user/modal_address'
-
 export default {
   name: 'UserAddress',
   components: {
@@ -73,33 +68,35 @@ export default {
     return {
       visibleModal: false,
       isCreated: false,
+      listUserAddress: [],
       formData: {
+        recipientName: '',
+        recipientPhoneNumber: '',
         city: '',
-        id_user: '',
-        address: '',
+        defaultAddress: '',
         district: '',
         ward: '',
         latitude: '',
-        longitude: '',
-        recipientName: '',
-        recipientPhoneNumber: '',
-        isDefault: 0
+        longitude: ''
       }
     }
   },
   computed: {
-    listUserAddress () {
+    listAddress () {
       return this.$store.getters.userAddress
     }
   },
   watch: {
-    listUserAddress (newList, oldList) {
+    listAddress: {
+      handler (newList, oldList) {
+        this.listUserAddress = []
+        this.listUserAddress = newList
+        this.$forceUpdate()
+      },
+      deep: true
     }
   },
   created () {
-    this.getData()
-  },
-  mounted () {
     this.getData()
   },
   methods: {
@@ -117,7 +114,7 @@ export default {
         }
       })
     },
-    setDeliveryAddress (id) {
+    setAddressDefault (id) {
       this.$store.dispatch('setAddressDefault', { addressId: id }).then(rs => {
         this.$message.success({ content: 'Đặt địa chỉ mặc định thành công!' })
       }).catch(() => {
@@ -136,16 +133,14 @@ export default {
     resetFormData () {
       this.isCreated = false
       this.formData = {
+        recipientName: '',
+        recipientPhoneNumber: '',
         city: '',
-        id_user: '',
-        address: '',
+        defaultAddress: '',
         district: '',
         ward: '',
         latitude: '',
-        longitude: '',
-        recipientName: '',
-        recipientPhoneNumber: '',
-        isDefault: this.listUserAddress.length > 0 ? 0 : 1
+        longitude: ''
       }
     },
     handleCloseModal () {

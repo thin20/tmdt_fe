@@ -47,6 +47,10 @@
                     required: true,
                     message: 'Số điện thoại là bắt buộc',
                     trigger: 'change'
+                  },
+                  {
+                    validator: isPhoneNumber,
+                    trigger: 'blur'
                   }
                 ]">
                 <a-input
@@ -352,10 +356,16 @@ export default {
     },
     handleChangeProvince () {
       this.provinceCode = this.getProvinceCode(this.form.city)
+      this.form.district = ''
+      this.form.ward = ''
+      this.districtCode = ''
+      this.wardCode = ''
       this.getListDistrict()
     },
     handleChangeDistrict () {
       this.districtCode = this.getDistrictCode(this.form.district)
+      this.form.ward = ''
+      this.wardCode = ''
       this.getListWard()
     },
     handleFindCurrentAddress () {
@@ -399,7 +409,7 @@ export default {
                 longitude: Number.parseFloat(this.form.longitude)
               }
               this.$store.dispatch('updateUserAddress', params).then(rs => {
-                this.$success({ content: 'Cập nhật địa chỉ thành công!' })
+                this.$message.success({ content: 'Cập nhật địa chỉ thành công!' })
                 this.closeModal()
               }).catch(() => {
                 this.$error({ content: 'Cập nhật địa chỉ thất bại!' })
@@ -408,6 +418,14 @@ export default {
           }
         }
       })
+    },
+    isPhoneNumber (rule, value, callback) {
+      const regex = new RegExp(/(84|0[3|5|7|8|9])+([0-9]{8})\b/g)
+      if (value && !regex.test(value)) {
+        // eslint-disable-next-line standard/no-callback-literal
+        callback('Số điện thoại không hợp lệ!')
+      }
+      callback()
     },
     handleCancel () {
       this.closeModal()

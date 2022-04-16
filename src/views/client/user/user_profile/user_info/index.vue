@@ -13,7 +13,7 @@
             style="margin: 0 10px 0 0;">Số điện thoại</p>
           <div
             class="control-label"
-            style="margin: 0 10px 0 0;"> <span>{{ form.numberPhone }}</span>
+            style="margin: 0 10px 0 0;"> <span>{{ form.phoneNumber }}</span>
           </div>
         </div>
         <a-form-model-item
@@ -129,7 +129,7 @@
                     background-position: center;
                     background-repeat: no-repeat;
                     background-size: cover;"
-            :style="{ backgroundImage: `url(${ form.photoUrl})`}"
+            :style="{ backgroundImage: `url(${ form.image})`}"
           ></div>
           <div class=" p-2 btn-light cursor-pointer mt-4">
             <span class="mx-2 " id="btn-choose-image-user" @click="openFolderChoosePicture">
@@ -156,11 +156,11 @@ export default {
     return {
       form: {
         // url preview
-        photoUrl: '',
+        image: '',
         // file to upload server
         fileImage: null,
         email: '',
-        numberPhone: '',
+        phoneNumber: '',
         firstName: '',
         lastName: '',
         shobbeName: ''
@@ -169,15 +169,25 @@ export default {
       loading: false
     }
   },
+  computed: {
+    userInfo () {
+      return this.$store.getters.userInfo.info
+    }
+  },
+  watch: {
+    userInfo (newValue, oldValue) {
+      this.form = { ...this.form, ...newValue }
+    }
+  },
   created () {
     this.form = {
       ...this.form,
-      photoUrl: this.$store.getters.userInfo.info.photoURL,
-      email: this.partialUserEmail,
-      numberPhone: this.partialUserNumberPhone,
-      firstName: this.$store.getters.userInfo.info.firstName,
-      lastName: this.$store.getters.userInfo.info.lastName,
-      shobbeName: this.$store.getters.userInfo.info.shobbeName
+      image: this.$store.getters.image,
+      email: this.$store.getters.email,
+      phoneNumber: this.$store.getters.phoneNumber,
+      firstName: this.$store.getters.firstName,
+      lastName: this.$store.getters.lastName,
+      shobbeName: this.$store.getters.shobbeName
     }
   },
   methods: {
@@ -185,12 +195,12 @@ export default {
       this.$refs.inputChoosePicture.click()
     },
     userChoosePhotoFromLocal (event) {
-      this.form.photoUrl = URL.createObjectURL(event.target.files[0])
+      this.form.image = URL.createObjectURL(event.target.files[0])
       this.form.fileImage = event.target.files[0]
     },
     onUpdateInfoUser () {
       const dataUpdateUser = {
-        // photoUrl: this.photoUrl,
+        // image: this.image,
         email: this.form.email,
         firstName: this.form.firstName,
         lastName: this.form.lastName,

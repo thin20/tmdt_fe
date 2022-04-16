@@ -9,7 +9,6 @@ import {
   deleteUserAddress,
   setAddressDefault
 } from '@/api/user/index'
-import _ from 'lodash'
 
 const user = {
   state: {
@@ -19,8 +18,8 @@ const user = {
       id: 0,
       firstName: '',
       lastName: '',
-      photoURL: '',
-      numberPhone: '',
+      image: '',
+      phoneNumber: '',
       email: '',
       currentAddress: '',
       shobbeName: ''
@@ -30,13 +29,16 @@ const user = {
   getters: {
     isLogin: state => state.isLogin,
     userId: state => state.info.id,
-    shobbeName: state => state.info.shobbeName ?? `${state.info.firstName}`,
+    shobbeName: state => state.info.shobbeName ?? `${state.info.firstName} ${state.info.lastName}`,
     address: state => state.info.userAddress,
-    numberPhone: state => state.info.numberPhone,
+    phoneNumber: state => state.info.phoneNumber,
+    email: state => state.info.email,
     username: state => state.info.firstName + ' ' + state.info.lastName,
     firstName: state => state.info.firstName,
     lastName: state => state.info.lastName,
-    photoURL: state => state.info.photoURL
+    image: state => state.info.image,
+    token: state => state.token,
+    userAddress: state => state.userAddress
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -48,8 +50,8 @@ const user = {
         id: info.id,
         firstName: info.firstName,
         lastName: info.lastName,
-        photoURL: info.image,
-        numberPhone: info.phoneNumber,
+        image: info.image,
+        phoneNumber: info.phoneNumber,
         email: info.email,
         currentAddress: info.currentAddress,
         shobbeName: info.shobbeName
@@ -57,7 +59,7 @@ const user = {
       state.isLogin = true
     },
     SET_USER_ADDRESS: (state, address) => {
-      state.userAddress = _.cloneDeep(address)
+      state.userAddress = address
     },
     LOGOUT: (state, info) => {
       state.info = {}
@@ -108,7 +110,7 @@ const user = {
       return new Promise((resolve, reject) => {
         updateUserInfo(params).then(rs => {
           if (rs) {
-            dispatch('initUser', rs)
+            dispatch('loginByToken')
             resolve(rs)
           }
         }).catch(err => {
@@ -129,15 +131,12 @@ const user = {
       })
     },
     getUserAddress ({ commit }) {
-      return new Promise((resolve, reject) => {
-        getListAddress().then(rs => {
-          if (rs) {
-            commit('SET_USER_ADDRESS', rs)
-            resolve(rs)
-          }
-        }).catch(err => {
-          reject(err)
-        })
+      getListAddress().then(rs => {
+        if (rs) {
+          commit('SET_USER_ADDRESS', rs)
+        }
+      }).catch(() => {
+
       })
     },
     createUserAddress ({ dispatch }, params) {

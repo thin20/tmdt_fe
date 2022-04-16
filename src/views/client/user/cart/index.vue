@@ -16,16 +16,18 @@
             <a-row :gutter="16">
               <a-col :xs="24" :md="24" :lg="20">
                 <a-radio-group class="delivery-address__radio-group" v-model="addressChecked" @change="handleAddressCheckedChange">
-                  <a-radio class="delivery-address__radio" v-for="(item, index) in listUserAddress" :key="index" :value="item.id">
-                    <span class="address-bold-text" style="margin-right: 10px;">{{ item.recipientName }}</span>
-                    <span class="address-bold-text address-text">{{ item.recipientNumberPhone }}</span>
-                    <span class="address-text">{{ item.address + ' ' + item.ward + ' ' + item.district + ' ' + item.city }}</span>
-                    <span class="address-bold-text address-text">{{ item.isDefault === 1 ? 'Mặc định' : '' }}</span>
+                  <a-radio class="delivery-address__radio" v-for="(item, index) in listUserAddress" :key="index" :value="item.id" style="display: flex; margin-bottom: 5px;">
+                    <div style="display: flex; flex-wrap: wrap">
+                      <span class="address-bold-text" style="margin-right: 10px;">{{ item.recipientName }}</span>
+                      <span class="address-bold-text address-text">{{ item.recipientPhoneNumber }}</span>
+                      <span class="address-text">{{ item.address + ' ' + item.ward + ' ' + item.district + ' ' + item.city }}</span>
+                      <span class="address-bold-text address-text">{{ item.isDefault === 1 ? 'Mặc định' : '' }}</span>
+                    </div>
                   </a-radio>
                 </a-radio-group>
               </a-col>
               <a-col :xs="24" :md="24" :lg="4">
-                <div @click="handleOpenModalAddress" class="h-button__red p-4 h-color__white" style="cursor: pointer;width: 90%; margin: 0 auto; text-align: center;">
+                <div @click="handleOpenModalAddress" class="h-button__red p-4 h-color__white" style="cursor: pointer;width: 90%; margin: 0 auto; text-align: center; border-radius: 3px;">
                   <i class="fas fa-plus"></i>
                   <span class="mx-2"> Thêm địa chỉ </span>
                 </div>
@@ -182,16 +184,14 @@ export default {
       totalProductChecked: 0,
       keyRerender: false,
       formDataAddress: {
+        recipientName: '',
+        recipientPhoneNumber: '',
         city: '',
-        id_user: '',
-        address: '',
+        defaultAddress: '',
         district: '',
         ward: '',
         latitude: '',
-        longitude: '',
-        recipientName: '',
-        recipientNumberPhone: '',
-        isDefault: 0
+        longitude: ''
       },
       visibleModal: false,
       addressChecked: '',
@@ -332,16 +332,14 @@ export default {
     },
     resetFormData () {
       this.formDataAddress = {
+        recipientName: '',
+        recipientPhoneNumber: '',
         city: '',
-        id_user: '',
-        address: '',
+        defaultAddress: '',
         district: '',
         ward: '',
         latitude: '',
-        longitude: '',
-        recipientName: '',
-        recipientNumberPhone: '',
-        isDefault: this.listUserAddress.length > 0 ? 0 : 1
+        longitude: ''
       }
     },
     handleCloseModal () {

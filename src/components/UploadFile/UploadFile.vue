@@ -2,7 +2,7 @@
 
   <div>
     <div class="list-image-container"><div v-for="(image, index) in images" :key="index" class="square image-item">
-                                        <img :src="image.photoUrl" class="square" style="object-fit:cover">
+                                        <img :src="image.image" class="square" style="object-fit:cover">
                                         <i class="fas fa-minus  icon-minus" @click="removeImage(index)"></i>
                                       </div>
       <div class="square-upload square image-item" @click="openFileToChooseImage">
@@ -46,7 +46,7 @@ export default {
     userChoosePhotoFromLocal (event) {
       Array.from(event.target.files).forEach(file => {
         this.listImage.push({
-          photoUrl: URL.createObjectURL(file),
+          image: URL.createObjectURL(file),
           fileImage: file
         })
       })
