@@ -28,7 +28,11 @@ const api = {
   updateQuantityProductInCart: '/bill/updateQuantityProductInCart',
   deleteProductInCart: '/bill/deleteProductInCart',
   deleteProductsInCart: '/bill/deleteProductsInCart',
-  buyProducts: 'bill/buyProducts'
+  buyProducts: 'bill/buyProducts',
+
+  // bill
+  getListBillByPurchaseType: '/bill/listBill',
+  updateBillStatus: 'bill/updateBillStatus'
 }
 
 export default api
