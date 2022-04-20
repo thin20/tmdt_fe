@@ -311,7 +311,7 @@ export default {
             this.$store.dispatch('BuyProductsInCart', params).then(rs => {
               if (rs) {
                 this.$message.success({ content: 'Mua sản phẩm thành công!' })
-                this.push({ name: 'purchase' })
+                this.$router.push({ name: 'purchase' })
               }
             }).catch(err => {
               const mes = this.handleApiError(err)

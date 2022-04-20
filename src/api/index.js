@@ -32,7 +32,8 @@ const api = {
 
   // bill
   getListBillByPurchaseType: '/bill/listBill',
-  updateBillStatus: 'bill/updateBillStatus'
+  updateBillStatus: 'bill/updateBillStatus',
+  getListBillSellerByPurchaseType: '/bill/listBillOfSeller'
 }
 
 export default api

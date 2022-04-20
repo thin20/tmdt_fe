@@ -16,3 +16,11 @@ export function updateBillStatus (params) {
     data: params
   })
 }
+
+export function getListBillSellerByPurchaseType (params) {
+  return axios({
+    url: api.getListBillSellerByPurchaseType,
+    method: 'get',
+    params: params
+  })
+}

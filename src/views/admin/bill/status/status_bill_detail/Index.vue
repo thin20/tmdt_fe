@@ -50,38 +50,38 @@
             <span class="cart-item__cell-total-price"> {{ formatPriceToVND(totalPrice) }}</span>
           </div>
         </div>
-        <div v-if="this.bill.status === 4" class="purchase-card-buttons__container">
+        <div v-if="this.bill.status === PurchaseType.DELIVERING" class="purchase-card-buttons__container">
           <div class="purchase-card-buttons__text-info">
             <span class="purchase-text-info"><b>{{ `Đang giao hàng`.toUpperCase() }}</b></span>
           </div>
         </div>
-        <div v-else-if="this.bill.status === 5" class="purchase-card-buttons__container">
+        <div v-else-if="this.bill.status === PurchaseType.DELIVERED" class="purchase-card-buttons__container">
           <div class="purchase-card-buttons__text-info">
             <span class="purchase-text-info"><b>{{ `Đã giao hàng`.toUpperCase() }}</b></span>
           </div>
         </div>
-        <div v-else class="purchase-card-buttons__container">
+        <div v-else class="purchase-card-buttons__container" style="margin-top: 8px;">
           <div class="purchase-card-buttons__text-info">
             <span class="purchase-text-info"> <b>{{ typePurchase.toUpperCase() }}</b></span>
           </div>
           <div class="purchase-card-buttons__show-button-wrapper">
-            <button type="button" class="h-button__red p-3 h-color__white cursor-pointer purchase-button-primary" data-purchase-id="" data-bill-id="">Chi tiết đơn hàng</button>
+            <button type="button" class="h-button__red btn p-3 h-color__white cursor-pointer purchase-button-primary" data-purchase-id="" data-bill-id="">Chi tiết đơn hàng</button>
           </div>
-          <div v-if="bill.status === 2" class="purchase-card-buttons__show-button-wrapper">
+          <div v-if="bill.purchaseType === PurchaseType.WAIT_CONFIRM" class="purchase-card-buttons__show-button-wrapper">
             <button
               @click="acceptPurchase"
               type="button"
-              class="h-button__red p-3 h-color__white cursor-pointer purchase-button-primary purchase-button-cancel"
+              class="h-button__red btn p-3 h-color__white cursor-pointer purchase-button-primary purchase-button-cancel"
               data-purchase-id=""
               data-bill-id="bill.id">Xác nhận đơn hàng</button>
           </div>
-          <div v-else-if="bill.status === 3" class="purchase-card-buttons__show-button-wrapper">
+          <div v-else-if="bill.purchaseType === PurchaseType.WAIT_TAKE" class="purchase-card-buttons__show-button-wrapper">
             <button
               @click="acceptDelivery"
               type="button"
-              class="h-button__red p-3 h-color__white cursor-pointer purchase-button-primary purchase-button-cancel"
+              class="h-button__red btn p-3 h-color__white cursor-pointer purchase-button-primary purchase-button-cancel"
               data-purchase-id=""
-              data-bill-id="bill.id">Giao hàng</button>
+              data-bill-id="bill.billId">Giao hàng</button>
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@
 
 <script>
 import { mixin } from '@/utils/mixins'
-
+import { PurchaseType } from '@/const/app.const'
 export default {
   mixins: [mixin],
   name: 'Index',
@@ -103,6 +103,7 @@ export default {
   },
   data () {
     return {
+      PurchaseType,
       newPrice: 0,
       totalPrice: 0,
       typePurchase: '',
@@ -111,16 +112,28 @@ export default {
   },
   methods: {
     acceptPurchase () {
-      this.$emit('acceptPurchase', this.bill.id)
+      const _this = this
+      this.$confirm({
+        content: 'Xác nhận đơn hàng?',
+        onOk () {
+          _this.$emit('acceptPurchase', _this.bill.billId)
+        }
+      })
     },
     acceptDelivery () {
-      this.$emit('acceptDelivery', this.bill.id)
+      const _this = this
+      this.$confirm({
+        content: 'Xác nhận giao hàng?',
+        onOk () {
+          _this.$emit('acceptDelivery', _this.bill.billId)
+        }
+      })
     }
   },
   mounted () {
     this.newPrice = this.calcNewPrice(this.bill.product.price, this.bill.product.discount)
     this.totalPrice = this.newPrice * this.bill.quantity
-    this.typePurchase = this.labelPurchase(this.bill.status)
+    this.typePurchase = this.labelPurchase(this.bill.purchaseType)
     this.img = this.bill.user.image ? this.bill.user.image : '@/assets/img/user.png'
   }
 }
@@ -259,6 +272,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 8px;
 }
 .purchase-card-buttons__text-info{
   flex-grow : 1;

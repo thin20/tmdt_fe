@@ -143,8 +143,9 @@ export default {
       let callback = null
       switch (this.bill.purchaseType) {
         case PurchaseType.CANCELED:
+        case PurchaseType.DELIVERED:
           purchaseType = PurchaseType.ORDER
-          message = 'bạn có chắc muốn mua lại đơn hàng?'
+          message = 'Bạn có chắc muốn mua lại đơn hàng?'
           callback = () => {
             this.$router.push({ name: 'cart' })
             this.$message.success({ content: 'Thêm sản sản phẩm vào giỏ hàng thành công!' })
