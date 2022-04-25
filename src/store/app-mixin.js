@@ -24,9 +24,9 @@ const baseMixin = {
       if (!email) return ''
       return email.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, '$1***@$2')
     },
-    partialUserNumberPhone () {
-      const numberPhone = store.getters.userInfo.info.numberPhone
-      return numberPhone.replace(/(\d{3})\d{6}(\d{2})/, '$1*******$2')
+    partialUserPhoneNumber () {
+      const phoneNumber = store.getters.userInfo.info.phoneNumber
+      return phoneNumber.replace(/(\d{3})\d{6}(\d{2})/, '$1*******$2')
     }
   },
   methods: {

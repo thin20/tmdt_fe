@@ -189,6 +189,17 @@ export const mixin = {
         return
       }
       callback()
+    },
+    handlePaginationData (rs) {
+      if (rs.length === 0 | rs.data.length === 0) {
+        return {
+          total: 0
+        }
+      } else {
+        return {
+          total: rs.page_meta.total_elements
+        }
+      }
     }
   }
 }

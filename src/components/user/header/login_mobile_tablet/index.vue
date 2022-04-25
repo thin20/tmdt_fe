@@ -29,10 +29,20 @@ export default {
       visible: false
     }
   },
-  mounted () {
-    const { username, photoURL } = this.$store.getters.userInfo.info
-    this.username = username
-    this.image = photoURL
+  computed: {
+    userInfo () {
+      return this.$store.getters.userInfo.info
+    }
+  },
+  watch: {
+    userInfo (newValue) {
+      this.username = newValue.firstName + ' ' + newValue.lastName
+      this.image = newValue.image
+    }
+  },
+  created () {
+    this.username = this.$store.getters.username
+    this.image = this.$store.getters.image
   },
   methods: {
     gotoAccount () {

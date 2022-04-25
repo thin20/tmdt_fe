@@ -1,6 +1,14 @@
 import Vue from 'vue'
-import { loginByToken } from '@/api/user/index'
-import _ from 'lodash'
+import {
+  loginByToken,
+  updateUserInfo,
+  changePassword,
+  getListAddress,
+  createUserAddress,
+  updateUserAddress,
+  deleteUserAddress,
+  setAddressDefault
+} from '@/api/user/index'
 
 const user = {
   state: {
@@ -8,26 +16,29 @@ const user = {
     isLogin: false,
     info: {
       id: 0,
-      firstName: 'Nguyễn Cao',
-      lastName: 'Thìn',
-      photoURL: 'https://cf.shopee.vn/file/3fc286d5073fbafafdcf616a505672eb',
-      numberPhone: '08345345345',
-      email: 'shobbebus@gmail.com',
-      currentAddress: 'Số 26, ngõ 62, Vân Canh, Hoài Đức, Hà Nội',
-      shopName: 'Shop của Thìn'
+      firstName: '',
+      lastName: '',
+      image: '',
+      phoneNumber: '',
+      email: '',
+      currentAddress: '',
+      shobbeName: ''
     },
     userAddress: []
   },
   getters: {
     isLogin: state => state.isLogin,
     userId: state => state.info.id,
-    shopName: state => state.info.shopName ?? `${state.info.firstName}`,
+    shobbeName: state => state.info.shobbeName ?? `${state.info.firstName} ${state.info.lastName}`,
     address: state => state.info.userAddress,
-    numberPhone: state => state.info.numberPhone,
+    phoneNumber: state => state.info.phoneNumber,
+    email: state => state.info.email,
     username: state => state.info.firstName + ' ' + state.info.lastName,
     firstName: state => state.info.firstName,
     lastName: state => state.info.lastName,
-    photoURL: state => state.info.photoURL
+    image: state => state.info.image,
+    token: state => state.token,
+    userAddress: state => state.userAddress
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -39,16 +50,16 @@ const user = {
         id: info.id,
         firstName: info.firstName,
         lastName: info.lastName,
-        photoURL: info.image,
-        numberPhone: info.phoneNumber,
+        image: info.image,
+        phoneNumber: info.phoneNumber,
         email: info.email,
         currentAddress: info.currentAddress,
-        shopName: info.shobbeName
+        shobbeName: info.shobbeName
       }
       state.isLogin = true
     },
     SET_USER_ADDRESS: (state, address) => {
-      state.userAddress = _.cloneDeep(address)
+      state.userAddress = address
     },
     LOGOUT: (state, info) => {
       state.info = {}
@@ -95,61 +106,85 @@ const user = {
         }
       })
     },
+    updateUserInfo ({ dispatch }, params) {
+      return new Promise((resolve, reject) => {
+        updateUserInfo(params).then(rs => {
+          if (rs) {
+            dispatch('loginByToken')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    changePassword ({ dispatch }, params) {
+      return new Promise((resolve, reject) => {
+        changePassword(params).then(rs => {
+          if (rs) {
+            dispatch('logout')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
     getUserAddress ({ commit }) {
-      // TODO: Call api get list user address
-      const userAddress = [
-        {
-          id: 1,
-          city: 'Hà Nội',
-          country: 'Việt Nam',
-          id_user: 3,
-          address: 'Thành phố Phủ Lý',
-          district: 'Bắc Ninh',
-          ward: 'Tiên du',
-          recipientName: 'Thìn',
-          recipientNumberPhone: '0123456789',
-          isDefault: 1,
-          latitude: 21.010163,
-          longitude: 105.724724
-        },
-        {
-          id: 2,
-          city: 'Hà Nội',
-          country: 'Việt Nam',
-          id_user: 3,
-          address: 'Ngõ 11 Thôn Hạ',
-          district: 'Huyện Thanh Oai',
-          ward: 'Xã Cự Khê',
-          recipientName: 'Nguyễn Cao Thìn',
-          recipientNumberPhone: '0123456789',
-          isDefault: 0,
-          latitude: 20.9111461,
-          longitude: 105.7815231
+      getListAddress().then(rs => {
+        if (rs) {
+          commit('SET_USER_ADDRESS', rs)
         }
-      ]
-      commit('SET_USER_ADDRESS', userAddress)
+      }).catch(() => {
+
+      })
     },
     createUserAddress ({ dispatch }, params) {
       return new Promise((resolve, reject) => {
-        // TODO: call api create user address
-        resolve(params)
+        createUserAddress(params).then(rs => {
+          if (rs) {
+            dispatch('getUserAddress')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     updateUserAddress ({ dispatch }, params) {
       return new Promise((resolve, reject) => {
-        // TODO: call api update user address
-        resolve(params)
+        updateUserAddress(params).then(rs => {
+          if (rs) {
+            dispatch('getUserAddress')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     removeUserAddress ({ dispatch }, params) {
       return new Promise((resolve, reject) => {
-        // TODO: call api remove user address
-        resolve(params)
+        deleteUserAddress(params).then(rs => {
+          if (rs) {
+            dispatch('getUserAddress')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
-    updateUserAddressDefault ({ dispatch }, params) {
+    setAddressDefault ({ dispatch }, params) {
       return new Promise((resolve, reject) => {
-        // TODO: call api set user address detail
+        setAddressDefault(params).then(rs => {
+          if (rs) {
+            dispatch('getUserAddress')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
     resetUserState ({ commit }) {

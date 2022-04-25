@@ -30,6 +30,10 @@ export default {
     currentPage: {
       required: true,
       type: Number
+    },
+    pageSizeOptionsProp: {
+      type: Array,
+      required: false
     }
   },
   data () {
@@ -44,6 +48,7 @@ export default {
   mounted () {
     this.showSizeChange = this.$props.showSize
     this.pageSize = this.pageSizeProp
+    this.pageSizeOptions = this.pageSizeOptionsProp ? this.pageSizeOptionsProp : this.pageSizeOptions
   },
 
   watch: {

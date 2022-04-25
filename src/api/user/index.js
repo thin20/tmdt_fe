@@ -24,3 +24,58 @@ export function loginByToken (token) {
     data: token
   })
 }
+
+export function updateUserInfo (params) {
+  return axios({
+    method: 'post',
+    url: api.updateUserInfo,
+    data: params
+  })
+}
+
+export function changePassword (params) {
+  return axios({
+    method: 'put',
+    url: api.changePassword,
+    data: params
+  })
+}
+
+export function getListAddress (params) {
+  return axios({
+    method: 'get',
+    url: api.getListAddress,
+    params: params
+  })
+}
+
+export function createUserAddress (params) {
+  return axios({
+    method: 'post',
+    url: api.createUserAddress,
+    data: params
+  })
+}
+
+export function updateUserAddress (params) {
+  return axios({
+    method: 'post',
+    url: api.updateUserAddress,
+    data: params
+  })
+}
+
+export function deleteUserAddress (params) {
+  return axios({
+    method: 'delete',
+    url: api.deleteUserAddress + '?addressId=' + params.addressId
+  })
+}
+
+export function setAddressDefault (params) {
+  return axios({
+    method: 'post',
+    url: api.setAddressDefault,
+    data: params
+  })
+}

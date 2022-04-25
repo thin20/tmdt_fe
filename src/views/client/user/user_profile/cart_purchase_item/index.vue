@@ -64,7 +64,7 @@
             <span class="cart-item__cell-total-price"> {{ formatPriceToVND(totalPrice) }}</span>
           </div>
         </div>
-        <div v-if="bill.status === 6" class="purchase-card-buttons__container">
+        <div v-if="bill.purchaseType === 6" class="purchase-card-buttons__container">
           <div class="purchase-card-buttons__text-info">
             <span class="purchase-text-info">Bạn đã hủy</span>
           </div>
@@ -97,12 +97,12 @@
               data-purchase-id=""
               data-bill-id="product.billDetail.id"> {{ buttonTextOfStatus }} </button>
           </div>
-          <div v-if="bill.status === 4" class="purchase-card-buttons__container">
+          <div v-if="bill.purchaseType === 4" class="purchase-card-buttons__container">
             <div class="purchase-card-buttons__show-button-wrapper">
               <button type="button" class="h-button__red p-3 h-color__white cursor-pointer" @click="purchaseAction">Xác nhận đơn hàng</button>
             </div>
           </div>
-          <div v-if="bill.status === 5" class="purchase-card-buttons__container">
+          <div v-if="bill.purchaseType === 5" class="purchase-card-buttons__container">
             <div class="purchase-card-buttons__show-button-wrapper">
               <button type="button" class="h-button__red p-3 h-color__white cursor-pointer purchase-button-primary" @click="evaluateProduct">Đánh giá sản phẩm</button>
             </div>
@@ -138,30 +138,48 @@ export default {
       this.$router.push({ path: `/product/${this.convertToSlugToProductDetail(this.bill.product.name, this.bill.product.id)}?billId=${this.bill.id}`, query: { billId: this.bill.id } })
     },
     purchaseAction () {
-      let actionType = 0
+      let purchaseType = 0
+      let message = ''
       let callback = null
-      switch (this.bill.status) {
+      switch (this.bill.purchaseType) {
         case PurchaseType.CANCELED:
-          actionType = PurchaseType.ORDER
+        case PurchaseType.DELIVERED:
+          purchaseType = PurchaseType.ORDER
+          message = 'Bạn có chắc muốn mua lại đơn hàng?'
           callback = () => {
             this.$router.push({ name: 'cart' })
+            this.$message.success({ content: 'Thêm sản sản phẩm vào giỏ hàng thành công!' })
           }
           break
         case PurchaseType.DELIVERING:
-          actionType = PurchaseType.DELIVERED
+          purchaseType = PurchaseType.DELIVERED
+          message = 'Bạn đã nhận được hàng?'
+          callback = () => {
+            this.$message.success({ content: 'Xác nhận đã nhận được hàng thành công!' })
+          }
           break
         case PurchaseType.WAIT_CONFIRM:
-          actionType = 2
+          purchaseType = PurchaseType.CANCELED
+          message = 'Bạn có chắc chắn muốn hủy đơn hàng?'
+          callback = () => {
+            this.$message.success({ content: 'Hủy đơn hàng thành công!' })
+          }
           break
       }
-        this.$emit('purchaseAction', { ...this.bill, actionType }, callback)
+      const _this = this
+      this.$confirm({
+        content: message,
+        onOk () {
+          _this.$emit('purchaseAction', { ..._this.bill, purchaseType }, callback)
+        }
+      })
     }
   },
-  mounted () {
+  created () {
     this.newPrice = this.calcNewPrice(this.bill.product.price, this.bill.product.discount)
     this.totalPrice = this.newPrice * this.bill.quantity
-    this.typePurchase = this.labelPurchase(this.bill.status)
-    switch (this.bill.status) {
+    this.typePurchase = this.labelPurchase(this.bill.purchaseType)
+    switch (this.bill.purchaseType) {
       case PurchaseType.WAIT_CONFIRM:
         this.buttonTextOfStatus = 'Hủy đơn hàng'
         break
@@ -194,6 +212,7 @@ export default {
     }
 
     .cart-shop-header-content {
+        padding-bottom: 8px;
         border-bottom: 1px solid rgba(0,0,0,.09);
         flex: 1;
         display: flex;
@@ -307,6 +326,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-top: 8px;
     }
     .purchase-card-buttons__text-info{
         flex-grow : 1;
