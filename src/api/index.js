@@ -17,6 +17,7 @@ const api = {
   searchListProduct: 'product/search-list',
   likeProduct: 'productUserLiked/likeProduct',
   getProductDetail: 'product/getProductDetail',
+  searchListProductBySeller: 'product/getListProductBySeller',
 
   // category
   getListCategory: 'category/getListCategory',

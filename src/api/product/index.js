@@ -24,3 +24,11 @@ export function getProductDetail (params) {
     params: params
   })
 }
+
+export function searchListProductBySeller (params) {
+  return axios({
+    url: api.searchListProductBySeller,
+    method: 'get',
+    params: params
+  })
+}
