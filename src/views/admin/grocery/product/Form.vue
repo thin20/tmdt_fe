@@ -17,7 +17,7 @@
             <a-row :gutter="16" type="flex">
               <a-col :xs="24" :md="24" :lg="12" class="filter-item-container">
                 <a-form-model-item
-                  prop="id_category"
+                  prop="categoryId"
                   label="Loại sản phẩm"
                   :rules="[
                     {
@@ -32,7 +32,7 @@
                     show-search
                     :disabled="isEditable||isView"
                     style="width: 100%"
-                    v-model="modelForm.id_category"
+                    v-model="modelForm.categoryId"
                     :tree-data="listProductType"
                     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
                   />
@@ -204,16 +204,8 @@
   </a-spin>
 </template>
 <script>
-
-function getBase64 (file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = () => resolve(reader.result)
-    reader.onerror = error => reject(error)
-  })
-}
-
+import { getProductDetail } from '@/api/product/index'
+import { getBase64 } from '@/utils/util'
 export default {
   name: 'DrawForm',
   components: {},
@@ -265,7 +257,7 @@ export default {
         description: '',
         discount: '',
         id: '',
-        id_category: '',
+        categoryId: '',
         id_user: '',
         image: '',
         images: [],
@@ -284,13 +276,24 @@ export default {
       fileIdRemove: []
     }
   },
-  created () {
+  async created () {
+    console.log('listProductType: ', this.listProductType)
     if ((this.isEditable && this.objectEdit && this.objectEdit.id) || (this.isView && this.objectEdit && this.objectEdit.id)) {
-      this.modelForm = this.objectEdit
-      if (this.objectEdit.images) {
-        let i
-        const len = this.objectEdit.images.length
-        for (i = 0; i < len; i++) {
+      const params = {
+        userId: this.$store.getters.userId,
+        productId: this.objectEdit.id
+      }
+     const body = await getProductDetail(params)
+      if (body) {
+        const { depicted, productDetail } = body
+        this.modelForm = productDetail
+        this.modelForm.images = depicted
+        console.log('modelForm: ', this.modelForm)
+        const len = this.objectEdit.images && Array.isArray(this.objectEdit.images) && this.objectEdit.images.length || 0
+        if (!len) {
+          this.fileList = []
+        }
+        for (let i = 0; i < len; i++) {
           this.fileList.push({
             uid: this.objectEdit.images[i].id,
             name: 'image.png',
@@ -298,8 +301,6 @@ export default {
             url: this.objectEdit.images[i].path
           })
         }
-      } else {
-        this.fileList = []
       }
     }
   },
@@ -363,7 +364,7 @@ export default {
       if (this.objectEdit.id && this.isEditable) {
         const params = {
           name: this.modelForm.name,
-          id_category: this.modelForm.id_category,
+          categoryId: this.modelForm.categoryId,
           id_user: this.$store.getters.userId,
           quantity: Number(this.modelForm.quantity),
           discount: Number(this.modelForm.discount),
@@ -392,7 +393,7 @@ export default {
       } else {
         const params = {
           name: this.modelForm.name,
-          id_category: this.modelForm.id_category,
+          categoryId: this.modelForm.categoryId,
           id_user: this.$store.getters.userId,
           quantity: Number(this.modelForm.quantity),
           discount: Number(this.modelForm.discount),

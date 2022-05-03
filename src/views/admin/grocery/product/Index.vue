@@ -131,7 +131,7 @@
       :is-create="drawIsCreate"
       @closeDraw="handleCancelDraw"
       :objectEdit="objectEdit"
-      :list-product-type="treeData"
+      :listProductType="treeData"
       :listStatus="listStatus"
     >
     </DrawForm>
@@ -141,7 +141,7 @@
 <script>
 import columns from './columns'
 import DrawForm from './Form'
-import { searchListProductBySeller } from '@/api/product/index'
+import { searchListProductBySeller, changeStatusProduct } from '@/api/product/index'
 import { getListCategory } from '@/api/category/index'
 import moment from 'moment'
 import _ from 'lodash'
@@ -207,13 +207,12 @@ export default {
       }
       for (i = 0; i < list.length; i += 1) {
         node = list[i]
-        if (node.parent_category_id !== 0) {
-            list[map[node.parent_category_id]].children.push(node)
+        if (node.parentCategoryId !== 0) {
+            list[map[node.parentCategoryId]].children.push(node)
         } else {
           roots.push(node)
         }
       }
-      console.log('roots: ', roots)
       return roots
     },
     getCategory () {
@@ -245,8 +244,18 @@ export default {
       }
     },
     changeStatusProduct (record) {
-      // TODO: call api change status product
-      console.log(record.id)
+      const params = {
+        productId: record.id
+      }
+      changeStatusProduct(params).then(rs => {
+        if (rs) {
+          this.$message.success({ content: 'Cập nhật trạng thái sản phẩm thành công! ' })
+          this.getData()
+        }
+      }).catch(err => {
+        const mes = this.handleApiError(err)
+        this.$error({ content: mes })
+      })
     },
     getData () {
       const params = {

@@ -32,3 +32,11 @@ export function searchListProductBySeller (params) {
     params: params
   })
 }
+
+export function changeStatusProduct (params) {
+  return axios({
+    url: api.changeStatusProduct,
+    method: 'put',
+    data: params
+  })
+}
