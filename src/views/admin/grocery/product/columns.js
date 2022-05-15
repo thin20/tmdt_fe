@@ -47,6 +47,14 @@ export default [
     width: 70
   },
   {
+    title: 'Giảm giá',
+    dataIndex: 'discount',
+    scopedSlots: { customRender: 'discount' },
+    align: 'right',
+    ellipsis: true,
+    width: 50
+  },
+  {
     title: 'Số lượng sản phẩm',
     dataIndex: 'quantity',
     scopedSlots: { customRender: 'quantity' },

@@ -1,5 +1,5 @@
 <template>
-  <div class="purchase-list-page__empty-page-wrapper h-full">
+  <div class="purchase-list-page__empty-page-wrapper h-full" :key="rerender">
     <div class="d-flex justify-content-between">
       <h2>Địa chỉ của tôi</h2>
       <div style="cursor: pointer; border-radius: 3px;" @click="handleOpenModalCreate" class="h-button__red p-4 h-color__white cursor-pointer" data-toggle="modal" data-target="#modal-add-address">
@@ -59,6 +59,7 @@
 
 <script>
 import ModalAddress from '@/components/user/modal_address'
+
 export default {
   name: 'UserAddress',
   components: {
@@ -69,6 +70,7 @@ export default {
       visibleModal: false,
       isCreated: false,
       listUserAddress: [],
+      rerender: false,
       formData: {
         recipientName: '',
         recipientPhoneNumber: '',
@@ -87,13 +89,10 @@ export default {
     }
   },
   watch: {
-    listAddress: {
-      handler (newList, oldList) {
-        this.listUserAddress = []
-        this.listUserAddress = newList
-        this.$forceUpdate()
-      },
-      deep: true
+    listAddress (newList, oldList) {
+      this.listUserAddress = []
+      this.listUserAddress = newList
+      this.rerender = !this.rerender
     }
   },
   created () {
@@ -147,6 +146,7 @@ export default {
       this.resetFormData()
       this.visibleModal = false
       this.create = false
+      this.getData()
     }
   }
 }

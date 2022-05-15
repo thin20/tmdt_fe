@@ -1,5 +1,5 @@
 <template>
-  <a-spin :spinning="loading" class="app-spinning">
+  <a-spin :spinning="loadingDrawer" class="app-spinning">
     <a-drawer
       :title="drawTitle"
       :visible="drawSync"
@@ -190,7 +190,7 @@
             type="primary"
             style="margin-left: 1rem;"
             @click="handleSubmit"
-            :loading="loading">Lưu
+            :loading="loadingDrawer">Lưu
           </a-button>
         </div>
         <div align="right" v-else>
@@ -204,8 +204,10 @@
   </a-spin>
 </template>
 <script>
-import { getProductDetail } from '@/api/product/index'
+import { getProductDetail, createProduct, updateProduct } from '@/api/product/index'
+import { amazonUploadFiles } from '@/api/amazonUploadFiles'
 import { getBase64 } from '@/utils/util'
+
 export default {
   name: 'DrawForm',
   components: {},
@@ -248,7 +250,6 @@ export default {
   },
   data () {
     return {
-      loading: false,
       previewVisible: false,
       loadingDrawer: false,
       modelForm: {
@@ -258,7 +259,7 @@ export default {
         discount: '',
         id: '',
         categoryId: '',
-        id_user: '',
+        userId: '',
         image: '',
         images: [],
         isSell: '',
@@ -266,7 +267,7 @@ export default {
         numberOfStar: '',
         price: '',
         quantity: '',
-        selled: '',
+        sold: '',
         title: '',
         updatedAt: ''
       },
@@ -277,28 +278,26 @@ export default {
     }
   },
   async created () {
-    console.log('listProductType: ', this.listProductType)
     if ((this.isEditable && this.objectEdit && this.objectEdit.id) || (this.isView && this.objectEdit && this.objectEdit.id)) {
       const params = {
         userId: this.$store.getters.userId,
         productId: this.objectEdit.id
       }
-     const body = await getProductDetail(params)
+      const body = await getProductDetail(params)
       if (body) {
         const { depicted, productDetail } = body
         this.modelForm = productDetail
         this.modelForm.images = depicted
-        console.log('modelForm: ', this.modelForm)
-        const len = this.objectEdit.images && Array.isArray(this.objectEdit.images) && this.objectEdit.images.length || 0
+        const len = this.modelForm.images && Array.isArray(this.modelForm.images) && this.modelForm.images.length || 0
         if (!len) {
           this.fileList = []
         }
         for (let i = 0; i < len; i++) {
           this.fileList.push({
-            uid: this.objectEdit.images[i].id,
+            uid: this.modelForm.images[i].id,
             name: 'image.png',
             status: 'done',
-            url: this.objectEdit.images[i].path
+            url: this.modelForm.images[i].path
           })
         }
       }
@@ -362,59 +361,88 @@ export default {
     },
     doUpdate () {
       if (this.objectEdit.id && this.isEditable) {
-        const params = {
-          name: this.modelForm.name,
-          categoryId: this.modelForm.categoryId,
-          id_user: this.$store.getters.userId,
-          quantity: Number(this.modelForm.quantity),
-          discount: Number(this.modelForm.discount),
-          price: Number(this.modelForm.price),
-          description: this.modelForm.description
-        }
+        if (this.fileList.length === 0) return
+        this.loadingDrawer = true
         const formData = new FormData()
-        formData.append('product',
-          new Blob([JSON.stringify(params)],
-            {
-              type: 'application/json'
-            }
-          ))
-        formData.append('id_images', new Blob([JSON.stringify(this.fileIdRemove)],
-          {
-            type: 'application/json'
+        const len = this.filePreUpload.length
+        for (let i = 0; i < len; i++) {
+          formData.append('files', this.filePreUpload[i])
+        }
+        amazonUploadFiles(formData).then(rs => {
+          const imagesPath = []
+          rs.filePath && Array.isArray(rs.filePath) && rs.filePath.forEach(item => {
+            imagesPath.push(item.filePath)
+          })
+
+          const params = {
+            productId: this.modelForm.id,
+            productName: this.modelForm.name,
+            categoryId: this.modelForm.categoryId,
+            quantity: Number(this.modelForm.quantity),
+            price: Number(this.modelForm.price),
+            discount: Number(this.modelForm.discount),
+            imagePath: this.fileList[0].url,
+            description: this.modelForm.description,
+            fileIdRemove: this.fileIdRemove,
+            imagesPath: imagesPath
           }
-        ))
-        const len = this.filePreUpload.length
-        for (let i = 0; i < len; i++) {
-          formData.append('files', this.filePreUpload[i])
-        }
-        this.loadingDrawer = true
-        // TODO: call api update product
-        this.gotoList(true)
-      } else {
-        const params = {
-          name: this.modelForm.name,
-          categoryId: this.modelForm.categoryId,
-          id_user: this.$store.getters.userId,
-          quantity: Number(this.modelForm.quantity),
-          discount: Number(this.modelForm.discount),
-          price: Number(this.modelForm.price),
-          description: this.modelForm.description
-        }
-        console.log(params)
-        const formData = new FormData()
-        formData.append('product',
-          new Blob([JSON.stringify(params)],
-            {
-              type: 'application/json'
+          console.log(params)
+          updateProduct(params).then(rs => {
+            if (rs) {
+              this.$message.success({ content: 'Cập nhật sản phẩm thành công!' })
+              this.gotoList(true)
             }
-          ))
+          }).catch(err => {
+            const mes = this.handleApiError(err)
+            this.$error({ content: mes })
+          }).finally(() => {
+            this.loadingDrawer = false
+          })
+        }).finally(() => {
+          this.loadingDrawer = false
+        })
+      } else {
+        this.loadingDrawer = true
+        const formData = new FormData()
         const len = this.filePreUpload.length
         for (let i = 0; i < len; i++) {
           formData.append('files', this.filePreUpload[i])
         }
-        this.loadingDrawer = true
-        // TODO: call api create product
-        this.gotoList(true)
+        amazonUploadFiles(formData).then(rs => {
+          if (rs) {
+            const imagesPath = []
+            rs.filePath && Array.isArray(rs.filePath) && rs.filePath.forEach(item => {
+              imagesPath.push(item.filePath)
+            })
+            const params = {
+              productName: this.modelForm.name,
+              categoryId: this.modelForm.categoryId,
+              quantity: Number(this.modelForm.quantity),
+              price: Number(this.modelForm.price),
+              discount: Number(this.modelForm.discount),
+              description: this.modelForm.description,
+              imagesPath: imagesPath
+            }
+            createProduct(params).then(rs => {
+              if (rs) {
+                this.$message.success({ content: 'Thêm mới sản phẩm thành công!' })
+                this.gotoList(true)
+              }
+            }).catch(err => {
+              const mes = this.handleApiError(err)
+              this.$error({ content: mes })
+            }).finally(() => {
+              this.loadingDrawer = false
+            })
+          } else {
+            this.$error({ content: 'Bạn phải chọn ảnh cho sản phẩm!' })
+          }
+        }).catch(err => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        }).finally(() => {
+          this.loadingDrawer = false
+        })
       }
     }
   }

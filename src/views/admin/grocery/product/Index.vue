@@ -261,7 +261,7 @@ export default {
       const params = {
         categoryId: this.filters.categoryId,
         keyword: this.filters.productName,
-        page: this.pagination.current > 1 ? this.pagination - 1 : 0,
+        page: this.pagination.current > 1 ? this.pagination.current - 1 : 0,
         size: this.pagination.pageSize
       }
       this.loading = true

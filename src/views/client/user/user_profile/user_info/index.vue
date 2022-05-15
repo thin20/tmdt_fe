@@ -109,7 +109,7 @@
               v-model="form.shobbeName"></a-input>
           </div>
         </a-form-model-item>
-        <div class="d-flex" style="padding-left: calc(20% + 1.25rem);" @click="onUpdateInfoUser">
+        <div class="d-flex" style="padding-left: calc(20% + 1.25rem);">
           <a-spin :spinning="loading">
             <button @click="handleUpdateUserInfo" type="button" class="h-button__red h-color__white cursor-pointer btn-save">Lưu</button>
           </a-spin>
@@ -148,6 +148,7 @@
 </template>
 
 <script>
+import { amazonUploadFiles } from '@/api/amazonUploadFiles/index'
 import { baseMixin } from '@/store/app-mixin.js'
 export default {
   name: 'UserInfo',
@@ -208,6 +209,7 @@ export default {
       }
 
       if (this.form.fileImage) dataUpdateUser.fileImage = this.form.fileImage
+      console.log('params:', dataUpdateUser)
     },
     handleUpdateUserInfo () {
       const _this = this
@@ -217,20 +219,34 @@ export default {
           _this.loading = true
           _this.$refs.ruleForm.validate(valid => {
             if (valid) {
-              const params = {
-                firstName: _this.form.firstName,
-                lastName: _this.form.lastName,
-                email: _this.form.email,
-                shobbeName: _this.form.shobbeName
+              // Change avatar
+              if (this.form.fileImage) {
+                const formData = new FormData()
+                formData.append('files', this.form.fileImage)
+                amazonUploadFiles(formData).then(rs => {
+                  if (rs) {
+                    const paramsChangeAvatar = {
+                      imagePath: rs.filePath[0].filePath
+                    }
+                    this.$store.dispatch('changeAvatar', paramsChangeAvatar).then(rs => {})
+                  }
+                }).finally(() => {
+                  const params = {
+                    firstName: _this.form.firstName,
+                    lastName: _this.form.lastName,
+                    email: _this.form.email,
+                    shobbeName: _this.form.shobbeName
+                  }
+                  _this.$store.dispatch('updateUserInfo', params).then(rs => {
+                    _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
+                  }).catch(err => {
+                    const mes = _this.handleApiError(err)
+                    _this.$error({ content: mes })
+                  }).finally(() => {
+                    _this.loading = false
+                  })
+                })
               }
-              _this.$store.dispatch('updateUserInfo', params).then(rs => {
-                _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
-              }).catch(err => {
-                const mes = _this.handleApiError(err)
-                _this.$error({ content: mes })
-              }).finally(() => {
-                _this.loading = false
-              })
             }
           })
         }

@@ -4,7 +4,7 @@
       <nav class="header__navbar hide-on-mobile-tablet">
         <ul class="header__navbar-list">
           <li class="header__navbar-item">
-            <a class="header__navbar-title--no-pointer btn-linkto-producer" @click="goToAdmin">Vào trang người bán</a>
+            <a class="header__navbar-title--no-pointer btn-linkto-producer" v-if="visibleGotoAdmin" @click="goToAdmin">Vào trang người bán</a>
           </li>
           <li class="header__navbar-item header__navbar-item--has-qr header__navbar-item--separate">
             Vào cửa hàng ứng dụng
@@ -157,7 +157,8 @@ export default {
     return {
       keyword: '',
       listSearchHistory: [],
-      visibleHistory: false
+      visibleHistory: false,
+      visibleGotoAdmin: false
     }
   },
   created () {
@@ -166,6 +167,15 @@ export default {
       localStorage.setItem('listSearchHistory', JSON.stringify([]))
     } else {
       this.listSearchHistory = this.getListSearchHistory()
+    }
+
+    if (this.$store.getters.isLogin) {
+      this.visibleGotoAdmin = true
+    }
+  },
+  mounted () {
+    if (this.$store.getters.isLogin) {
+      this.visibleGotoAdmin = true
     }
   },
   methods: {
