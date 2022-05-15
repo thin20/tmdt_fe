@@ -3,6 +3,7 @@ import {
   loginByToken,
   updateUserInfo,
   changePassword,
+  changeAvatar,
   getListAddress,
   createUserAddress,
   updateUserAddress,
@@ -61,6 +62,9 @@ const user = {
     SET_USER_ADDRESS: (state, address) => {
       state.userAddress = address
     },
+    SET_USER_AVATAR: (state, avatar) => {
+      state.info.image = avatar
+    },
     LOGOUT: (state, info) => {
       state.info = {}
       state.token = ''
@@ -111,6 +115,18 @@ const user = {
         updateUserInfo(params).then(rs => {
           if (rs) {
             dispatch('loginByToken')
+            resolve(rs)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+      })
+    },
+    changeAvatar ({ commit }, params) {
+      return new Promise((resolve, reject) => {
+        changeAvatar(params).then(rs => {
+          if (rs) {
+            commit('SET_USER_AVATAR', params.imagePath)
             resolve(rs)
           }
         }).catch(err => {

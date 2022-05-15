@@ -47,6 +47,14 @@ export default [
     width: 70
   },
   {
+    title: 'Giảm giá',
+    dataIndex: 'discount',
+    scopedSlots: { customRender: 'discount' },
+    align: 'right',
+    ellipsis: true,
+    width: 50
+  },
+  {
     title: 'Số lượng sản phẩm',
     dataIndex: 'quantity',
     scopedSlots: { customRender: 'quantity' },
@@ -56,8 +64,8 @@ export default [
   },
   {
     title: 'Đã bán',
-    dataIndex: 'selled',
-    scopedSlots: { customRender: 'selled' },
+    dataIndex: 'sold',
+    scopedSlots: { customRender: 'sold' },
     ellipsis: true,
     align: 'right',
     width: 100
@@ -86,12 +94,4 @@ export default [
     ellipsis: true,
     width: 100
   }
-  // {
-  //   title: 'Mô tả sản phẩm',
-  //   dataIndex: 'description',
-  //   scopedSlots: { customRender: 'description' },
-  //   align: 'left',
-  //   ellipsis: true,
-  //   width: 300
-  // }
 ]

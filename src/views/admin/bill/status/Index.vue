@@ -102,7 +102,9 @@ export default {
     },
     getListBillDetail () {
       const params = {
-        purchaseType: this.indexActive
+        purchaseType: this.indexActive,
+        page: this.pagination.current > 0 ? this.pagination.current - 1 : 0,
+        size: this.pagination.pageSize
       }
       this.loading = true
       getListBillSellerByPurchaseType(params).then(rs => {

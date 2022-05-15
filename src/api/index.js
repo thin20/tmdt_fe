@@ -5,6 +5,7 @@ const api = {
   register: '/user/register',
   updateUserInfo: '/user/updateUserInfo',
   changePassword: '/user/changePassword',
+  changeAvatar: '/user/changeAvatar',
 
   // address
   getListAddress: '/address/getListAddress',
@@ -17,6 +18,10 @@ const api = {
   searchListProduct: 'product/search-list',
   likeProduct: 'productUserLiked/likeProduct',
   getProductDetail: 'product/getProductDetail',
+  searchListProductBySeller: 'product/getListProductBySeller',
+  createProduct: '/product/createProduct',
+  updateProduct: '/product/updateProduct',
+  changeStatusProduct: '/product/changeStatusSell',
 
   // category
   getListCategory: 'category/getListCategory',

@@ -33,6 +33,14 @@ export function updateUserInfo (params) {
   })
 }
 
+export function changeAvatar (params) {
+  return axios({
+    method: 'post',
+    url: api.changeAvatar,
+    data: params
+  })
+}
+
 export function changePassword (params) {
   return axios({
     method: 'put',
