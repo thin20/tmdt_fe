@@ -56,3 +56,11 @@ export function changeStatusProduct (params) {
     data: params
   })
 }
+
+export function addProductVisit (params) {
+  return axios({
+    url: api.addProductVisit,
+    method: 'put',
+    data: params
+  })
+}

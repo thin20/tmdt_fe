@@ -3,9 +3,7 @@
     <h4 class="title">{{ title }}</h4>
     <ul class="list">
       <li :key="index" v-for="(item, index) in list">
-        <span :class="index < 3 ? 'active' : null">{{ index + 1 }}</span>
-        <span>{{ item.name }}</span>
-        <span>{{ item.total }}</span>
+        <span v-for="field in item" :key="field">{{ field }}</span>
       </li>
     </ul>
   </div>
@@ -45,6 +43,7 @@ export default {
           color: rgba(0, 0, 0, .65);
           font-size: 14px;
           line-height: 22px;
+          padding-right: 20px;
 
           &:first-child {
             background-color: #f5f5f5;

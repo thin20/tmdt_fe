@@ -40,7 +40,7 @@ import SaleProduct from '@/views/client/user/product_detail/sale_product'
 import DetailProduct from '@/views/client/user/product_detail/detail_product'
 import Pagination from '@/components/user/pagination'
 import '@/assets/css/productDetail.scss'
-import { getProductDetail } from '@/api/product/index'
+import { getProductDetail, addProductVisit } from '@/api/product/index'
 export default {
   name: 'ProductDetail',
   components: {
@@ -72,6 +72,7 @@ export default {
       this.$router.push({ name: 'home' })
     }
     this.getProductDetail(productId)
+    addProductVisit({ productId: productId }).then(rs => {})
   },
   methods: {
     getIdProductFromSlug (slugWithId) {
