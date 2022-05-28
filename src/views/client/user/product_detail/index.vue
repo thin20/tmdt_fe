@@ -88,11 +88,7 @@ export default {
       getProductDetail(params).then(rs => {
         if (rs) {
           this.productDetail = rs.productDetail ? rs.productDetail : {}
-          this.depicted = [{
-            id: 0,
-            productId: rs.productDetail.id,
-            path: rs.productDetail.image
-          }, ...rs.depicted]
+          this.depicted = [...rs.depicted]
         }
       }).catch(err => {
         const mes = this.handleApiError(err)

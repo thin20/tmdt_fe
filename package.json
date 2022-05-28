@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.10.25",
     "@ant-design-vue/pro-layout": "^1.0.8",
     "@antv/data-set": "^0.10.2",
     "ant-design-vue": "=1.7.6",

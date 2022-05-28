@@ -8,3 +8,26 @@ export function getRevenueByDate (params) {
     params: params
   })
 }
+
+export function getDataSalesDashboard (params) {
+  return axios({
+    url: api.getDataSalesDashboard,
+    method: 'get',
+    params: params
+  })
+}
+
+export function getDataSellNumbersDashboard (params) {
+  return axios({
+    url: api.getDataSellNumbersDashboard,
+    method: 'get',
+    params: params
+  })
+}
+
+export function getListTopVisitProduct () {
+  return axios({
+    url: api.getListTopVisitProduct,
+    method: 'get'
+  })
+}

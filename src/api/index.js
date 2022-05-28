@@ -42,7 +42,10 @@ const api = {
   getListBillSellerByPurchaseType: '/bill/listBillOfSeller',
 
   // dashboard
-  getRevenueByDate: 'dashboard/getRevenueSellerByDate'
+  getRevenueByDate: 'dashboard/getRevenueSellerByDate',
+  getDataSalesDashboard: 'dashboard/getDataSalesDashboard',
+  getDataSellNumbersDashboard: 'dashboard/getDataSellNumbersDashboard',
+  getListTopVisitProduct: 'dashboard/getListTopVisitProduct'
 }
 
 export default api
