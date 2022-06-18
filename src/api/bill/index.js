@@ -17,6 +17,14 @@ export function updateBillStatus (params) {
   })
 }
 
+export function productBuyBack (params) {
+  return axios({
+    url: api.productBuyBack,
+    method: 'post',
+    data: params
+  })
+}
+
 export function getListBillSellerByPurchaseType (params) {
   return axios({
     url: api.getListBillSellerByPurchaseType,

@@ -36,7 +36,7 @@
 <script>
 import CartPurchase from '../cart_purchase/index'
 import { PurchaseType } from '@/const/app.const'
-import { getListBillByPurchaseType, updateBillStatus } from '@/api/bill/index'
+import { getListBillByPurchaseType, updateBillStatus, productBuyBack } from '@/api/bill/index'
 import Pagination from '@/components/user/pagination/index'
 import _ from 'lodash'
 
@@ -76,19 +76,34 @@ export default {
       this.getListPurchase()
     },
     purchaseAction ({ billId, purchaseType }, callback) {
-      const params = {
-        billId: billId,
-        statusId: purchaseType
-      }
-      updateBillStatus(params).then(rs => {
-        if (rs) {
-          this.getListPurchase()
-          callback()
+      if (purchaseType === PurchaseType.ORDER) {
+        const params = {
+          billId: billId
         }
-      }).catch(err => {
-        const mes = this.handleApiError(err)
-        this.$error({ content: mes })
-      })
+        productBuyBack(params).then(rs => {
+          if (rs) {
+            this.getListPurchase()
+            callback()
+          }
+        }).catch(err => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        })
+      } else {
+        const params = {
+          billId: billId,
+          statusId: purchaseType
+        }
+        updateBillStatus(params).then(rs => {
+          if (rs) {
+            this.getListPurchase()
+            callback()
+          }
+        }).catch(err => {
+          const mes = this.handleApiError(err)
+          this.$error({ content: mes })
+        })
+      }
     },
     getByPagination ({ page, limit }) {
       this.pagination.current = page || 1

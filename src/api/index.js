@@ -39,6 +39,7 @@ const api = {
   // bill
   getListBillByPurchaseType: '/bill/listBill',
   updateBillStatus: 'bill/updateBillStatus',
+  productBuyBack: 'bill/productBuyBack',
   getListBillSellerByPurchaseType: '/bill/listBillOfSeller',
 
   // dashboard
