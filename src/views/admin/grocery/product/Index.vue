@@ -15,6 +15,9 @@
             <a-form-model-item prop="categoryId">
               <a-select
                 v-model="filters.categoryId"
+                show-search
+                :filter-option="filterSelectOption"
+                :allow-clear="true"
               >
                 <a-select-option :key="''" :value="''">--- Tất cả ---</a-select-option>
                 <a-select-option
