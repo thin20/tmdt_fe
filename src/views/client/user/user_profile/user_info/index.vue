@@ -216,10 +216,10 @@ export default {
       this.$confirm({
         content: 'Bạn có chắc muốn cập nhật thông tin?',
         onOk: () => {
-          _this.loading = true
           _this.$refs.ruleForm.validate(valid => {
             if (valid) {
               // Change avatar
+              _this.loading = true
               if (this.form.fileImage) {
                 const formData = new FormData()
                 formData.append('files', this.form.fileImage)

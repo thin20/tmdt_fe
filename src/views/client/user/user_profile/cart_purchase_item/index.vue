@@ -1,7 +1,7 @@
 <template>
-  <div class="cart-shop">
-    <div class="cart-shop-header" style="padding : 10px;">
-      <div class="cart-shop-header-content">
+  <div class="cart-shop2">
+    <div class="cart-shop-header2" style="padding : 10px;">
+      <div class="cart-shop-header-content2">
         <div class="order-content__header">
           <img src="@/assets/img/user.png" alt="User" class="header__navbar-user-img">&nbsp;&nbsp;
           <span href="#" class="cart-page-shop-header__shop-name fw-600">
@@ -197,12 +197,12 @@ export default {
         display:flex;
         align-items : center;
     }
-    .cart-shop {
+    .cart-shop2 {
         padding-bottom: 0 !important;
         background: none;
         margin-bottom: 20px;
     }
-    .cart-shop-header {
+    .cart-shop-header2 {
         padding-left: 20px !important;
         padding-right: 20px !important;
         background-color: #fff;
@@ -211,7 +211,7 @@ export default {
         align-items: center;
     }
 
-    .cart-shop-header-content {
+    .cart-shop-header-content2 {
         padding-bottom: 8px;
         border-bottom: 1px solid rgba(0,0,0,.09);
         flex: 1;

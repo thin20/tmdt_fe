@@ -1,6 +1,6 @@
 <template>
   <div class="cart-shop">
-    <div class="cart-shop-header" style="padding : 10px;">
+    <div class="cart-shop-header1" style="padding : 10px;">
       <div class="cart-shop-header-content">
         <div class="order-content__header">
           <img :src="img" alt="user" class="header__navbar-user-img">&nbsp;&nbsp;
@@ -149,7 +149,7 @@ export default {
   background: none;
   margin-bottom: 20px;
 }
-.cart-shop-header {
+.cart-shop-header1 {
   padding-left: 20px !important;
   padding-right: 20px !important;
   background-color: #fff;

@@ -147,12 +147,12 @@ export default {
 .depicted-product__img-list {
     margin-top: 8px;
     display: flex;
-    justify-content: space-between;
-  overflow-x: auto;
+    justify-content: flex-start;
+    overflow-x: auto;
 }
 
 .depicted-product__img-item {
-
+  margin-right: 8px;
   max-width: 100%;
   min-width: 24%;
   padding: 5px;
