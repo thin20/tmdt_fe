@@ -215,36 +215,49 @@ export default {
       const _this = this
       this.$confirm({
         content: 'Bạn có chắc muốn cập nhật thông tin?',
-        onOk: () => {
-          _this.loading = true
-          _this.$refs.ruleForm.validate(valid => {
+        onOk: async () => {
+          _this.$refs.ruleForm.validate(async valid => {
             if (valid) {
               // Change avatar
+              _this.loading = true
               if (this.form.fileImage) {
                 const formData = new FormData()
                 formData.append('files', this.form.fileImage)
-                amazonUploadFiles(formData).then(rs => {
-                  if (rs) {
-                    const paramsChangeAvatar = {
-                      imagePath: rs.filePath[0].filePath
-                    }
-                    this.$store.dispatch('changeAvatar', paramsChangeAvatar).then(rs => {})
+                const file = await amazonUploadFiles(formData)
+                if (file) {
+                  const paramsChangeAvatar = {
+                    imagePath: file.filePath[0].filePath
                   }
+                  await this.$store.dispatch('changeAvatar', paramsChangeAvatar)
+                }
+                const params = {
+                  firstName: _this.form.firstName,
+                  lastName: _this.form.lastName,
+                  email: _this.form.email,
+                  shobbeName: _this.form.shobbeName
+                }
+                _this.$store.dispatch('updateUserInfo', params).then(rs => {
+                  _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
+                }).catch(err => {
+                  const mes = _this.handleApiError(err)
+                  _this.$error({ content: mes })
                 }).finally(() => {
-                  const params = {
-                    firstName: _this.form.firstName,
-                    lastName: _this.form.lastName,
-                    email: _this.form.email,
-                    shobbeName: _this.form.shobbeName
-                  }
-                  _this.$store.dispatch('updateUserInfo', params).then(rs => {
-                    _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
-                  }).catch(err => {
-                    const mes = _this.handleApiError(err)
-                    _this.$error({ content: mes })
-                  }).finally(() => {
-                    _this.loading = false
-                  })
+                  _this.loading = false
+                })
+              } else {
+                const params = {
+                  firstName: _this.form.firstName,
+                  lastName: _this.form.lastName,
+                  email: _this.form.email,
+                  shobbeName: _this.form.shobbeName
+                }
+                _this.$store.dispatch('updateUserInfo', params).then(rs => {
+                  _this.$message.success({ content: 'Cập nhật thông tin thành công!' })
+                }).catch(err => {
+                  const mes = _this.handleApiError(err)
+                  _this.$error({ content: mes })
+                }).finally(() => {
+                  _this.loading = false
                 })
               }
             }

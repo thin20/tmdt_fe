@@ -381,7 +381,7 @@ export default {
             quantity: Number(this.modelForm.quantity),
             price: Number(this.modelForm.price),
             discount: Number(this.modelForm.discount),
-            imagePath: this.fileList[0].url,
+            imagePath: imagesPath[0],
             description: this.modelForm.description,
             fileIdRemove: this.fileIdRemove,
             imagesPath: imagesPath

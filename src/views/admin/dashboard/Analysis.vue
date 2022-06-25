@@ -1,97 +1,45 @@
 <template>
   <div>
     <a-row :gutter="24">
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.total-sales')" total="126,560 ₫">
-          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
+      <a-col :sm="24" :md="24" :xl="24" :style="{ marginBottom: '24px' }">
+        <chart-card :loading="loading" :title="'Tổng doanh số theo ngày'" :total="`${formatPriceToVND(revenueToday)}`">
           <div>
-            <trend flag="up" style="margin-right: 16px;">
-              <span slot="term">{{ $t('dashboard.analysis.week') }}</span>
-              12%
-            </trend>
-            <trend flag="down">
-              <span slot="term">{{ $t('dashboard.analysis.day') }}</span>
-              11%
-            </trend>
+            <trend :flag="revenueChangePercent > 0 ? 'up' : 'down'" style="margin-right: 16px;">
+              <span slot="term">So với ngày hôm qua: {{ revenueChangePercent > 0 ? 'tăng ' : 'giảm ' }} </span>{{ Math.abs(revenueChangePercent) }}% </trend>
           </div>
-          <template slot="footer">{{ $t('dashboard.analysis.day-sales') }}<span> 234.56 ₫</span></template>
-        </chart-card>
-      </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.visits')" :total="8846 | NumberFormat">
-          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-area />
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.day-visits') }}<span> {{ '1234' | NumberFormat }}</span></template>
-        </chart-card>
-      </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.payments')" :total="6560 | NumberFormat">
-          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-bar />
-          </div>
-          <template slot="footer">{{ $t('dashboard.analysis.conversion-rate') }} <span>60%</span></template>
-        </chart-card>
-      </a-col>
-      <a-col :sm="24" :md="12" :xl="6" :style="{ marginBottom: '24px' }">
-        <chart-card :loading="loading" :title="$t('dashboard.analysis.operational-effect')" total="78%">
-          <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-            <a-icon type="info-circle-o" />
-          </a-tooltip>
-          <div>
-            <mini-progress color="rgb(19, 194, 194)" :target="80" :percentage="78" height="8px" />
-          </div>
-          <template slot="footer">
-            <trend flag="down" style="margin-right: 16px;">
-              <span slot="term">{{ $t('dashboard.analysis.week') }}</span>
-              12%
-            </trend>
-            <trend flag="up">
-              <span slot="term">{{ $t('dashboard.analysis.day') }}</span>
-              80%
-            </trend>
-          </template>
         </chart-card>
       </a-col>
     </a-row>
 
-    <a-card :loading="loading" :bordered="false" :body-style="{padding: '0'}">
+    <a-card :loading="loadingSales" :bordered="false" :body-style="{padding: '0'}">
       <div class="salesCard">
         <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
           <div class="extra-wrapper" slot="tabBarExtraContent">
-            <div class="extra-item">
-              <a>{{ $t('dashboard.analysis.all-day') }}</a>
-              <a>{{ $t('dashboard.analysis.all-week') }}</a>
-              <a>{{ $t('dashboard.analysis.all-month') }}</a>
-              <a>{{ $t('dashboard.analysis.all-year') }}</a>
-            </div>
-            <a-range-picker :style="{width: '256px'}" />
+            <a-select v-model="filterSales.year" @change="getDataSales" style="width: 130px">
+              <a-select-option v-for="item in listYearSeller" :key="item.value" :value="item.value">{{ item.name }}</a-select-option>
+            </a-select>
           </div>
-          <a-tab-pane loading="true" :tab="$t('dashboard.analysis.sales')" key="1">
+          <a-tab-pane loading="true" :tab="'Bán hàng'" key="1">
             <a-row>
               <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar :data="barData" :title="$t('dashboard.analysis.sales-trend')" />
+                <div class="dashboard-sales--title">Đồ thị doanh số</div>
+                <div ref="salesDashboard" style="height: 300px;"></div>
               </a-col>
               <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list :title="$t('dashboard.analysis.sales-ranking')" :list="rankList"/>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-          <a-tab-pane :tab="$t('dashboard.analysis.visits')" key="2">
-            <a-row>
-              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
-                <bar :data="barData2" :title="$t('dashboard.analysis.visits-trend')" />
-              </a-col>
-              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24">
-                <rank-list :title="$t('dashboard.analysis.visits-ranking')" :list="rankList"/>
+                <div class="dashboard-sales--title">Xếp hạng doanh số</div>
+                <a-table
+                  :data-source="dataSales.salesRanking"
+                  :columns="columnsSalesRanking"
+                  :rowKey=" (rowKey, index ) => index"
+                  :pagination="false"
+                >
+                  <template slot="rowIndex" slot-scope="text, record, index">
+                    <span>{{ getTableRowIndex(paginationSalesRanking.pageSize, paginationSalesRanking.current, index) }} </span>
+                  </template>
+                  <template slot="revenue" slot-scope="text, record">
+                    <span>{{ formatPriceToVND(record.revenue) }} </span>
+                  </template>
+                </a-table>
               </a-col>
             </a-row>
           </a-tab-pane>
@@ -99,111 +47,48 @@
       </div>
     </a-card>
 
-    <div class="antd-pro-pages-dashboard-analysis-twoColLayout" :class="!isMobile && 'desktop'">
-      <a-row :gutter="24" type="flex" :style="{ marginTop: '24px' }">
-        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-          <a-card :loading="loading" :bordered="false" :title="$t('dashboard.analysis.online-top-search')" :style="{ height: '100%' }">
-            <a-dropdown :trigger="['click']" placement="bottomLeft" slot="extra">
-              <a class="ant-dropdown-link" href="#">
-                <a-icon type="ellipsis" />
-              </a>
-              <a-menu slot="overlay">
-                <a-menu-item>
-                  <a href="javascript:;">{{ $t('dashboard.analysis.dropdown-option-one') }}</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a href="javascript:;">{{ $t('dashboard.analysis.dropdown-option-two') }}</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
-            <a-row :gutter="68">
-              <a-col :xs="24" :sm="12" :style="{ marginBottom: ' 24px'}">
-                <number-info :total="12321" :sub-total="17.1">
-                  <span slot="subtitle">
-                    <span>{{ $t('dashboard.analysis.search-users') }}</span>
-                    <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-                      <a-icon type="info-circle-o" :style="{ marginLeft: '8px' }" />
-                    </a-tooltip>
-                  </span>
-                </number-info>
-                <!-- miniChart -->
-                <div>
-                  <mini-smooth-area :style="{ height: '45px' }" :dataSource="searchUserData" :scale="searchUserScale" />
-                </div>
+    <a-card :loading="loadingSellNumber" :bordered="false" :body-style="{padding: '0'}" :style="{ marginTop: '24px' }">
+      <div class="salesCard">
+        <a-tabs default-active-key="1" size="large" :tab-bar-style="{marginBottom: '24px', paddingLeft: '16px'}">
+          <div class="extra-wrapper" slot="tabBarExtraContent">
+            <a-select v-model="filterSellNumber.year" @change="getDataSellNumber" style="width: 130px">
+              <a-select-option v-for="item in listYearSeller" :key="item.value" :value="item.value">{{ item.name }}</a-select-option>
+            </a-select>
+          </div>
+          <a-tab-pane loading="true" :tab="'Bán hàng'" key="1">
+            <a-row>
+              <a-col :xl="16" :lg="12" :md="12" :sm="24" :xs="24">
+                <div class="dashboard-sales--title">Đồ thị số lượng</div>
+                <div ref="sellNumberDashboard" style="height: 300px;"></div>
               </a-col>
-              <a-col :xs="24" :sm="12" :style="{ marginBottom: ' 24px'}">
-                <number-info :total="2.7" :sub-total="26.2" status="down">
-                  <span slot="subtitle">
-                    <span>{{ $t('dashboard.analysis.per-capita-search') }}</span>
-                    <a-tooltip :title="$t('dashboard.analysis.introduce')" slot="action">
-                      <a-icon type="info-circle-o" :style="{ marginLeft: '8px' }" />
-                    </a-tooltip>
-                  </span>
-                </number-info>
-                <!-- miniChart -->
-                <div>
-                  <mini-smooth-area :style="{ height: '45px' }" :dataSource="searchUserData" :scale="searchUserScale" />
-                </div>
+              <a-col :xl="8" :lg="12" :md="12" :sm="24" :xs="24"><div class="dashboard-sales--title">Xếp hạng số lượng</div>
+                <a-table
+                  :data-source="dataSellNumber.sellNumberRanking"
+                  :columns="columnsSellNumberRanking"
+                  :rowKey=" (rowKey, index ) => index"
+                  :pagination="false"
+                >
+                  <template slot="rowIndex" slot-scope="text, record, index">
+                    <span>{{ getTableRowIndex(paginationSellNumberRanking.pageSize, paginationSellNumberRanking.current, index) }} </span>
+                  </template>
+                </a-table>
               </a-col>
             </a-row>
-            <div class="ant-table-wrapper">
-              <a-table
-                row-key="index"
-                size="small"
-                :columns="searchTableColumns"
-                :dataSource="searchData"
-                :pagination="{ pageSize: 5 }"
-              >
-                <span slot="range" slot-scope="text, record">
-                  <trend :flag="record.status === 0 ? 'up' : 'down'">
-                    {{ text }}%
-                  </trend>
-                </span>
-              </a-table>
-            </div>
+          </a-tab-pane>
+        </a-tabs>
+      </div>
+    </a-card>
+
+    <div class="antd-pro-pages-dashboard-analysis-twoColLayout">
+      <a-row :gutter="24" type="flex" :style="{ marginTop: '24px' }">
+        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+          <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" :title="'Đồ thị doanh số biểu đồ tròn'" :style="{ height: '100%' }">
+            <div ref="pieChartSale" style="height: 300px;"></div>
           </a-card>
         </a-col>
         <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-          <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" :title="$t('dashboard.analysis.the-proportion-of-sales')" :style="{ height: '100%' }">
-            <div slot="extra" style="height: inherit;">
-              <!-- style="bottom: 12px;display: inline-block;" -->
-              <span class="dashboard-analysis-iconGroup">
-                <a-dropdown :trigger="['click']" placement="bottomLeft">
-                  <a-icon type="ellipsis" class="ant-dropdown-link" />
-                  <a-menu slot="overlay">
-                    <a-menu-item>
-                      <a href="javascript:;">{{ $t('dashboard.analysis.dropdown-option-one') }}</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a href="javascript:;">{{ $t('dashboard.analysis.dropdown-option-two') }}</a>
-                    </a-menu-item>
-                  </a-menu>
-                </a-dropdown>
-              </span>
-              <div class="analysis-salesTypeRadio">
-                <a-radio-group defaultValue="a">
-                  <a-radio-button value="a">{{ $t('dashboard.analysis.channel.all') }}</a-radio-button>
-                  <a-radio-button value="b">{{ $t('dashboard.analysis.channel.online') }}</a-radio-button>
-                  <a-radio-button value="c">{{ $t('dashboard.analysis.channel.stores') }}</a-radio-button>
-                </a-radio-group>
-              </div>
-
-            </div>
-            <!--            <h4>{{ $t('dashboard.analysis.sales') }}</h4>-->
-            <div>
-              <!-- style="width: calc(100% - 240px);" -->
-              <div>
-                <v-chart :force-fit="true" :height="405" :data="pieData" :scale="pieScale">
-                  <v-tooltip :showTitle="false" dataKey="item*percent" />
-                  <v-axis />
-                  <!-- position="right" :offsetX="-140" -->
-                  <v-legend dataKey="item"/>
-                  <v-pie position="percent" color="item" :vStyle="pieStyle" />
-                  <v-coord type="theta" :radius="0.75" :innerRadius="0.6" />
-                </v-chart>
-              </div>
-
-            </div>
+          <a-card class="antd-pro-pages-dashboard-analysis-salesCard" :loading="loading" :bordered="false" :title="'Biểu đồ lượng theo dõi sản phẩm'" :style="{ height: '100%' }">
+            <div ref="topVisitDashboard" style="height: 300px;"></div>
           </a-card>
         </a-col>
       </a-row>
@@ -212,168 +97,264 @@
 </template>
 
 <script>
+import { getRevenueByDate, getDataSalesDashboard, getDataSellNumbersDashboard, getListTopVisitProduct } from '@/api/dashboard/index'
+import { ChartCard, Trend } from '@/components'
+import { columnsSalesRanking } from './columnsSalesRanking'
+import { columnsSellNumberRanking } from './columnsSellNumberRanking'
 import moment from 'moment'
-import {
-  ChartCard,
-  MiniArea,
-  MiniBar,
-  MiniProgress,
-  RankList,
-  Bar,
-  Trend,
-  NumberInfo,
-  MiniSmoothArea
-} from '@/components'
-import { baseMixin } from '@/store/app-mixin'
+import * as am4core from '@amcharts/amcharts4/core'
+import * as am4charts from '@amcharts/amcharts4/charts'
+import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 
-const barData = []
-const barData2 = []
-for (let i = 0; i < 12; i += 1) {
-  barData.push({
-    x: `Tháng ${i + 1}`,
-    y: Math.floor(Math.random() * 1000) + 200
-  })
-  barData2.push({
-    x: `Tháng ${i + 1}`,
-    y: Math.floor(Math.random() * 1000) + 200
-  })
-}
-
-const rankList = []
-for (let i = 0; i < 7; i++) {
-  rankList.push({
-    name: 'Đảo Egret ' + (i + 1),
-    total: 1234.56 - i * 100
-  })
-}
-
-const searchUserData = []
-for (let i = 0; i < 7; i++) {
-  searchUserData.push({
-    x: moment().add(i, 'days').format('YYYY-MM-DD'),
-    y: Math.ceil(Math.random() * 10)
-  })
-}
-const searchUserScale = [
-  {
-    dataKey: 'x',
-    alias: 'thời gian'
-  },
-  {
-    dataKey: 'y',
-    alias: 'Số người dùng',
-    min: 0,
-    max: 10
-  }]
-
-const searchData = []
-for (let i = 0; i < 50; i += 1) {
-  searchData.push({
-    index: i + 1,
-    keyword: `tìm từ khóa-${i}`,
-    count: Math.floor(Math.random() * 1000),
-    range: Math.floor(Math.random() * 100),
-    status: Math.floor((Math.random() * 10) % 2)
-  })
-}
-
-const DataSet = require('@antv/data-set')
-
-const sourceData = [
-  { item: 'Thiết bị gia dụng', count: 32.2 },
-  { item: 'Rượu ăn được', count: 21 },
-  { item: 'Sức khỏe cá nhân', count: 17 },
-  { item: 'Hành lý quần áo', count: 13 },
-  { item: 'Sản phẩm cá nhân', count: 9 },
-  { item: 'khác', count: 7.8 }
-]
-
-const pieScale = [{
-  dataKey: 'percent',
-  min: 0,
-  formatter: '.0%'
-}]
-
-const dv = new DataSet.View().source(sourceData)
-dv.transform({
-  type: 'percent',
-  field: 'count',
-  dimension: 'item',
-  as: 'percent'
-})
-const pieData = dv.rows
-
+am4core.useTheme(am4themesAnimated)
 export default {
   name: 'Analysis',
-  mixins: [baseMixin],
   components: {
     ChartCard,
-    MiniArea,
-    MiniBar,
-    MiniProgress,
-    RankList,
-    Bar,
-    Trend,
-    NumberInfo,
-    MiniSmoothArea
+    Trend
   },
   data () {
     return {
-      loading: true,
-      rankList,
-
-      searchUserData,
-      searchUserScale,
-      searchData,
-
-      barData,
-      barData2,
-
-      //
-      pieScale,
-      pieData,
-      sourceData,
-      pieStyle: {
-        stroke: '#fff',
-        lineWidth: 1
+      moment,
+      columnsSalesRanking,
+      columnsSellNumberRanking,
+      loading: false,
+      listYearSeller: [],
+      revenueToday: '',
+      revenueYesterday: '',
+      revenueChangePercent: '',
+      filterSales: {
+        year: moment().year()
+      },
+      loadingSales: false,
+      dataSales: {
+        salesDashboard: [],
+        salesRanking: []
+      },
+      paginationSalesRanking: {
+        current: 1,
+        total: 0,
+        pageSize: 10,
+        pageSizes: 500,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total) => {
+          return 'Tổng số dòng ' + total
+        }
+      },
+      loadingSellNumber: false,
+      dataSellNumber: {
+        sellNumberDashboard: [],
+        sellNumberRanking: []
+      },
+      paginationSellNumberRanking: {
+        current: 1,
+        total: 0,
+        pageSize: 10,
+        pageSizes: 500,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ['10', '20', '30'],
+        showTotal: (total) => {
+          return 'Tổng số dòng ' + total
+        }
+      },
+      dataTopVisit: '',
+      filterSellNumber: {
+        year: moment().year()
       }
     }
   },
-  computed: {
-    searchTableColumns () {
-        return [
-      {
-        dataIndex: 'index',
-        title: this.$t('dashboard.analysis.table.rank'),
-        width: 90
-      },
-      {
-        dataIndex: 'keyword',
-        title: this.$t('dashboard.analysis.table.search-keyword')
-      },
-      {
-        dataIndex: 'count',
-        title: this.$t('dashboard.analysis.table.users')
-      },
-      {
-        dataIndex: 'range',
-        title: this.$t('dashboard.analysis.table.weekly-range'),
-        align: 'right',
-        sorter: (a, b) => a.range - b.range,
-        scopedSlots: { customRender: 'range' }
-      }
-      ]
-    }
+  async created () {
+    this.getListYearSeller()
+    this.getDataSales()
+    this.getDataSellNumber()
+    this.getDataTopVisit()
+    this.revenueToday = await this.getRevenueByDate(moment().format('YYYY/MM/DD'))
+    this.revenueYesterday = await this.getRevenueByDate(moment().subtract(1, 'days').format('YYYY/MM/DD'))
+    this.calcRevenueChangePercent()
   },
-  created () {
-    setTimeout(() => {
-      this.loading = !this.loading
-    }, 1000)
+  methods: {
+    async getRevenueByDate (dateTime) {
+      let revenue = 0
+      await getRevenueByDate({ dateTime: dateTime }).then(rs => {
+        if (rs) {
+          revenue = rs
+        }
+      })
+      return revenue
+    },
+    calcRevenueChangePercent () {
+      if (!this.revenueToday) {
+        this.revenueChangePercent = -100
+      } else if (!this.revenueYesterday) {
+        this.revenueChangePercent = 100
+      } else {
+        this.revenueChangePercent = ((this.revenueToday - this.revenueYesterday) / this.revenueYesterday).toFixed(2)
+        if (this.revenueChangePercent > 100) {
+          this.revenueChangePercent = 100
+        }
+        if (this.revenueChangePercent < -100) {
+          this.revenueChangePercent = -100
+        }
+      }
+    },
+    getListYearSeller () {
+      for (let i = 2021; i <= moment().year(); i++) {
+        this.listYearSeller.push({
+          value: i,
+          name: 'Năm ' + i
+        })
+      }
+    },
+    getDataSales () {
+      const params = {
+        yearTime: this.filterSales.year
+      }
+      getDataSalesDashboard(params).then(rs => {
+        if (rs) {
+          this.dataSales = rs
+        }
+      }).finally(() => {
+        this.initSalesDashboard()
+        this.initPieChartSale()
+      })
+    },
+    getDataSellNumber () {
+      const params = {
+        yearTime: this.filterSellNumber.year
+      }
+      getDataSellNumbersDashboard(params).then(rs => {
+        if (rs) {
+          this.dataSellNumber = rs
+        }
+      }).finally(() => {
+        this.initSellNumberDashboard()
+      })
+    },
+    getDataTopVisit () {
+      getListTopVisitProduct().then(rs => {
+        this.dataTopVisit = rs
+      }).finally(() => {
+        this.initTopVisitDashboard()
+      })
+    },
+    initSalesDashboard () {
+      // dashboard sales chart
+      var chart = am4core.create(this.$refs.salesDashboard, am4charts.XYChart)
+      chart.data = this.dataSales.salesDashboard
+
+      var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+      categoryAxis.dataFields.category = 'name'
+      categoryAxis.title.text = 'Tháng'
+
+      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      valueAxis.title.text = 'Doanh số (đvt: Đồng)'
+      valueAxis.logarithmic = true
+      valueAxis.renderer.minGridDistance = 10
+      valueAxis.treatZeroAs = 1
+
+      // Create series
+      var series = chart.series.push(new am4charts.ColumnSeries())
+      series.dataFields.valueY = 'revenue'
+      series.dataFields.categoryX = 'name'
+      series.name = ''
+      series.tooltipText = '{name}: [bold]{valueY}[/] đ'
+      series.columns.template.width = am4core.percent(30)
+      series.columns.template.fill = '#29d3bd'
+
+      // Add cursor
+      chart.cursor = new am4charts.XYCursor()
+    },
+    initSellNumberDashboard () {
+      // dashboard sell number chart
+      var chart1 = am4core.create(this.$refs.sellNumberDashboard, am4charts.XYChart)
+      chart1.data = this.dataSellNumber.sellNumberDashboard
+
+      var categoryAxis1 = chart1.xAxes.push(new am4charts.CategoryAxis())
+      categoryAxis1.dataFields.category = 'name'
+      categoryAxis1.title.text = ''
+
+      var valueAxis1 = chart1.yAxes.push(new am4charts.ValueAxis())
+      valueAxis1.title.text = ''
+      // valueAxis1.logarithmic = true
+      valueAxis1.treatZeroAs = 1
+
+      // Create series
+      var series1 = chart1.series.push(new am4charts.ColumnSeries())
+      series1.dataFields.valueY = 'sold'
+      series1.dataFields.categoryX = 'name'
+      series1.name = ''
+      series1.tooltipText = '{name}: [bold]{valueY}[/] sp'
+      series1.columns.template.width = am4core.percent(30)
+      series1.columns.template.fill = '#29d3bd'
+
+      // Add cursor
+      chart1.cursor = new am4charts.XYCursor()
+    },
+    initPieChartSale () {
+      var chart = am4core.create(this.$refs.pieChartSale, am4charts.PieChart)
+
+      // Add data
+      chart.data = this.dataSales.salesRanking
+
+      // Add and configure Series
+      var pieSeries = chart.series.push(new am4charts.PieSeries())
+      pieSeries.dataFields.value = 'revenue'
+      pieSeries.dataFields.category = 'name'
+
+      // Let's cut a hole in our Pie chart the size of 40% the radius
+      chart.innerRadius = am4core.percent(40)
+
+      // Put a thick white border around each Slice
+      pieSeries.slices.template.stroke = am4core.color('#4a2abb')
+      pieSeries.slices.template.strokeWidth = 2
+      pieSeries.slices.template.strokeOpacity = 1
+
+      // Add a legend
+      chart.legend = new am4charts.Legend()
+      chart.legend.maxHeight = 150
+      chart.legend.scrollable = true
+      chart.legend.maxWidth = 300
+    },
+    initTopVisitDashboard () {
+      // dashboard sales chart
+      var chart2 = am4core.create(this.$refs.topVisitDashboard, am4charts.XYChart)
+      chart2.data = this.dataTopVisit
+
+      var categoryAxis2 = chart2.xAxes.push(new am4charts.CategoryAxis())
+      categoryAxis2.dataFields.category = 'name'
+      categoryAxis2.title.text = 'Tên sản phẩm'
+
+      var valueAxis2 = chart2.yAxes.push(new am4charts.ValueAxis())
+      valueAxis2.title.text = 'Số lượng theo dõi'
+      // valueAxis2.renderer.minGridDistance = 10
+      valueAxis2.treatZeroAs = 1
+
+      // Create series
+      var series2 = chart2.series.push(new am4charts.ColumnSeries())
+      series2.dataFields.valueY = 'visit'
+      series2.dataFields.categoryX = 'name'
+      series2.name = ''
+      series2.tooltipText = '{name}: [bold]{valueY}[/] lượt'
+      series2.columns.template.width = am4core.percent(30)
+      series2.columns.template.fill = '#29d3bd'
+
+      // Add cursor
+      chart2.cursor = new am4charts.XYCursor()
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
+  .dashboard-sales--title {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 5px 20px 15px;
+  }
+
   .extra-wrapper {
     line-height: 55px;
     padding-right: 24px;

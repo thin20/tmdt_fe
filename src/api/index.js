@@ -22,6 +22,7 @@ const api = {
   createProduct: '/product/createProduct',
   updateProduct: '/product/updateProduct',
   changeStatusProduct: '/product/changeStatusSell',
+  addProductVisit: '/product/addProductVisit',
 
   // category
   getListCategory: 'category/getListCategory',
@@ -38,7 +39,14 @@ const api = {
   // bill
   getListBillByPurchaseType: '/bill/listBill',
   updateBillStatus: 'bill/updateBillStatus',
-  getListBillSellerByPurchaseType: '/bill/listBillOfSeller'
+  productBuyBack: 'bill/productBuyBack',
+  getListBillSellerByPurchaseType: '/bill/listBillOfSeller',
+
+  // dashboard
+  getRevenueByDate: 'dashboard/getRevenueSellerByDate',
+  getDataSalesDashboard: 'dashboard/getDataSalesDashboard',
+  getDataSellNumbersDashboard: 'dashboard/getDataSellNumbersDashboard',
+  getListTopVisitProduct: 'dashboard/getListTopVisitProduct'
 }
 
 export default api

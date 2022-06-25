@@ -3,6 +3,7 @@
     <h4 :style="{ marginBottom: '20px' }">{{ title }}</h4>
     <v-chart
       height="254"
+      style="max-width: 100%;"
       :data="data"
       :forceFit="true"
       :padding="['auto', 'auto', '40', '50']">
@@ -60,3 +61,9 @@ export default {
   }
 }
 </script>
+
+<style type="less">
+canvas {
+  max-width: 100% !important;
+}
+</style>
