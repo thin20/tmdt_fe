@@ -191,7 +191,13 @@ export default {
       } else if (!this.revenueYesterday) {
         this.revenueChangePercent = 100
       } else {
-        this.revenueChangePercent = (this.revenueToday - this.revenueYesterday) / 100
+        this.revenueChangePercent = ((this.revenueToday - this.revenueYesterday) / this.revenueYesterday).toFixed(2)
+        if (this.revenueChangePercent > 100) {
+          this.revenueChangePercent = 100
+        }
+        if (this.revenueChangePercent < -100) {
+          this.revenueChangePercent = -100
+        }
       }
     },
     getListYearSeller () {
